@@ -25,7 +25,7 @@ export default function Home() {
         
         // If user is authenticated and completed onboarding
         if (state.isAuthenticated && state.hasCompletedOnboarding) {
-          router.push('/introduction');
+          router.push('/units');
           return;
         }
         
@@ -44,7 +44,7 @@ export default function Home() {
     completeOnboarding(userName);
     setIsOnboardingComplete(true);
     // Redirect after onboarding
-    router.push('/introduction');
+    router.push('/units');
   };
 
   if (isLoading) {
