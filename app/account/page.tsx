@@ -7,7 +7,7 @@ import { useAppContext } from '@/context/AppContext'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+// import { Progress } from "@/components/ui/progress"
 import LogoutButton from "@/components/LogoutButton"
 import Link from "next/link"
 import { dashboardApi } from "@/lib/services/dashboard"
@@ -190,7 +190,7 @@ export default function AccountPage() {
                                             <div className="text-sm text-muted-foreground">XP Progress</div>
                                             <div className="text-sm">{overview?.xp ?? 0} XP</div>
                                         </div>
-                                        <Progress value={overview?.xpProgress ?? 0} />
+                                        {/* <Progress value={overview?.xpProgress ?? 0} /> */}
                                     </div>
                                 </div>
                             )}
