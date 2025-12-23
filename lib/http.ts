@@ -4,13 +4,14 @@ import type { InternalAxiosRequestConfig } from 'axios';
 import { getCookie, getCookies, setCookie, deleteCookie, hasCookie } from 'cookies-next';
 import { get } from 'node:http';
 
-export const API_BASE_URL = "https://7d7fbf9840ec.ngrok-free.app/api";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api';
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: false,
     baseURL: API_BASE_URL,
     // innhrok its not work fix that
     headers: {
+        "ngrok-skip-browser-warning": "true",
         'Content-Type': 'application/json',
     },
 });
