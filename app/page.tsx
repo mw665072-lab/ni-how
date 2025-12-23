@@ -53,7 +53,7 @@ export default function Home() {
 
   // Only show onboarding if user is authenticated
   if (!state.isAuthenticated) {
-    return null;
+        router.push('/login');
   }
 
   return (

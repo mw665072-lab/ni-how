@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,10 @@ export default function OnboardingScreen({
     );
     setUserName(filteredValue);
   };
+
+  useEffect(() => {
+    router.prefetch("/login");
+  }, []);
 
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
