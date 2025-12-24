@@ -20,6 +20,8 @@ export const sessionsApi = {
 
     const url = `${apiEndpoints.sessions.attempts(sessionId)}`;
     // apiClient.post expects endpoint and handles base url, but for multipart we need to pass config
-    return apiClient.post(url, formData, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+    return apiClient.post(url, formData, { headers: { 'ngrok-skip-browser-warning': 'true',
+      'Content-Type': 'multipart/form-data',
+     } });
   },
 };

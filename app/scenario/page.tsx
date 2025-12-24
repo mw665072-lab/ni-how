@@ -236,6 +236,7 @@ export default function ScenarioPage() {
     setIsSubmitting(true);
     try {
       const sessionId = sessionUtils.getSessionId();
+      console.log("Submitting attempt for session ID:", recordedAudio, sessionId);
 
       if (sessionId && currentScenario) {
         const response = await sessionsApi.submitAttempt(
