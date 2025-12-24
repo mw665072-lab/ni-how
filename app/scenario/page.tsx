@@ -84,16 +84,23 @@ export default function ScenarioPage() {
     }
   }, [searchParams]);
 
-  // Effect to handle audio playback ending
+  // Effect to handle audio playback ending and external pause/play events
   useEffect(() => {
     const audio = audioPlayerRef.current;
     if (!audio) return;
 
     const handleAudioEnd = () => setIsPlaying(false);
+    const handleAudioPause = () => setIsPlaying(false);
+    const handleAudioPlay = () => setIsPlaying(true);
+
     audio.addEventListener("ended", handleAudioEnd);
+    audio.addEventListener("pause", handleAudioPause);
+    audio.addEventListener("play", handleAudioPlay);
 
     return () => {
       audio.removeEventListener("ended", handleAudioEnd);
+      audio.removeEventListener("pause", handleAudioPause);
+      audio.removeEventListener("play", handleAudioPlay);
     };
   }, []);
 

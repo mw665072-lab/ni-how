@@ -36,15 +36,38 @@ export default function LanguageLearningInterface({
 
   console.log("arabicAudioUrl", arabicAudioUrl);
 
+  // Pause any other audio elements on the page (useful to avoid overlapping playback)
+  const pauseAllOtherAudios = (exclude?: HTMLAudioElement | null) => {
+    if (typeof document === "undefined") return;
+    document.querySelectorAll("audio").forEach((audio) => {
+      if (audio !== exclude) {
+        try {
+          (audio as HTMLAudioElement).pause();
+          (audio as HTMLAudioElement).currentTime = 0;
+        } catch (e) {
+          // ignore any DOM errors
+        }
+      }
+    });
+  };
+
   const handleContextPlay = () => {
     if (arabicAudioRef.current) {
       if (isContextPlaying) {
         arabicAudioRef.current.pause();
         arabicAudioRef.current.currentTime = 0;
+        setIsContextPlaying(false);
       } else {
+        // Pause other audios (including the pronunciation and any global audio)
+        pauseAllOtherAudios(arabicAudioRef.current);
+        setIsPronunciationPlaying(false);
+        if (chineseAudioRef.current) {
+          chineseAudioRef.current.pause();
+          chineseAudioRef.current.currentTime = 0;
+        }
         arabicAudioRef.current.play();
+        setIsContextPlaying(true);
       }
-      setIsContextPlaying(!isContextPlaying);
     }
   };
 
@@ -53,10 +76,18 @@ export default function LanguageLearningInterface({
       if (isPronunciationPlaying) {
         chineseAudioRef.current.pause();
         chineseAudioRef.current.currentTime = 0;
+        setIsPronunciationPlaying(false);
       } else {
+        // Pause other audios (including the context audio and any global audio)
+        pauseAllOtherAudios(chineseAudioRef.current);
+        setIsContextPlaying(false);
+        if (arabicAudioRef.current) {
+          arabicAudioRef.current.pause();
+          arabicAudioRef.current.currentTime = 0;
+        }
         chineseAudioRef.current.play();
+        setIsPronunciationPlaying(true);
       }
-      setIsPronunciationPlaying(!isPronunciationPlaying);
     }
   };
 
