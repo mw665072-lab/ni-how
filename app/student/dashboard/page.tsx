@@ -10,9 +10,14 @@ import { useEffect, useState, useMemo, useCallback, type ReactNode } from "react
 import { dashboardApi } from '@/lib/api'
 import type { DailyMetricsResponse, MonthlyMetricsResponse, CalendarResponse, DashboardOverview, TopicModeSummary } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
+import { useAppContext } from '@/context/AppContext'
+import { sessionUtils } from '@/lib/sessionUtils'
 
 export default function Dashboard() {
     useAuthProtection()
+    const { state } = useAppContext()
+    const displayName = state.authUser?.username ?? state.user ?? sessionUtils.getUsername() ?? 'User'
+
     const [dir, setDir] = useState<"ltr" | "rtl">(() => {
         try {
             return (localStorage.getItem("dir") as "ltr" | "rtl") || "ltr"
@@ -220,6 +225,13 @@ export default function Dashboard() {
         return items
     }, [])
 
+    // Helper to move months correctly in both LTR/RTL modes
+    const goToMonthOffset = (offset: number) => {
+        const d = new Date(calendarYear, calendarMonth - 1 + offset, 1)
+        setCalendarYear(d.getFullYear())
+        setCalendarMonth(d.getMonth() + 1)
+    }
+
     const metricValuesForRender = useMemo(() => {
         if (timeframe === 'daily') {
             const arr = dailyMetrics?.graphData ?? []
@@ -289,7 +301,7 @@ export default function Dashboard() {
                                     </svg>
                                 </AvatarFallback>
                             </Avatar>
-                            <h2 className="text-lg font-semibold text-gray-900">Salman Khan</h2>
+                            <h2 className="text-lg font-semibold text-gray-900">{displayName}</h2>
                             <div className="mt-2 w-full space-y-2 text-sm text-gray-600">
                                 <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
                                     <span>Class</span>
@@ -301,7 +313,7 @@ export default function Dashboard() {
                                 </div>
                                 <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
                                     <span>Topics</span>
-                                    <span className="font-semibold text-gray-900">{overview ? `${overview.topicsCompleted} / ${overview.totalTopics}` : '—'}</span>
+                                    <span dir="ltr" className="font-semibold text-gray-900">{overview ? `${overview.topicsCompleted} / ${overview.totalTopics}` : '—'}</span>
                                 </div>
                                 <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
                                     <span>Average Score</span>
@@ -343,25 +355,19 @@ export default function Dashboard() {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => {
-                                                    const d = new Date(calendarYear, calendarMonth - 2, 1)
-                                                    setCalendarYear(d.getFullYear())
-                                                    setCalendarMonth(d.getMonth() + 1)
-                                                }}
+                                                onClick={() => goToMonthOffset(dir === 'ltr' ? -1 : 1)}
+                                                title={dir === 'ltr' ? 'Previous month' : 'Next month'}
                                             >
-                                                <ChevronLeft className="h-4 w-4" />
+                                                {dir === 'ltr' ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                                             </Button>
                                             <h3 className="font-medium text-gray-900">{new Date(calendarYear, calendarMonth - 1).toLocaleString(undefined, { month: 'short', year: 'numeric' })}</h3>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => {
-                                                    const d = new Date(calendarYear, calendarMonth, 1)
-                                                    setCalendarYear(d.getFullYear())
-                                                    setCalendarMonth(d.getMonth() + 1)
-                                                }}
+                                                onClick={() => goToMonthOffset(dir === 'ltr' ? 1 : -1)}
+                                                title={dir === 'ltr' ? 'Next month' : 'Previous month'}
                                             >
-                                                <ChevronRight className="h-4 w-4" />
+                                                {dir === 'ltr' ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                                             </Button>
                                         </div>
                                         <div className="text-xs text-gray-500">Monthly view</div>
@@ -397,7 +403,10 @@ export default function Dashboard() {
                                     <p className="text-xs text-gray-500">Progress across modules</p>
                                 </div>
                                 <Button variant="link" className="text-blue-600 text-sm">
-                                    {(overview?.topicModes ?? fallbackModes).length} modes →
+                                    <span dir="ltr" className="inline-flex items-center gap-1">
+                                        {(overview?.topicModes ?? fallbackModes).length} <span className="text-xs">modes</span>
+                                        <ChevronRight className="h-3 w-3" />
+                                    </span>
                                 </Button>
                             </div>
                             {overviewError && (
