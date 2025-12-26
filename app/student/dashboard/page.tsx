@@ -8,7 +8,7 @@ import Header from "@/components/Header"
 import { useAuthProtection } from "@/hooks/useAuthProtection"
 import { useEffect, useState, useMemo, useCallback, type ReactNode } from "react"
 import { dashboardApi } from '@/lib/api'
-import type { DailyMetricsResponse, MonthlyMetricsResponse, CalendarResponse, DashboardOverview, TopicModeSummary } from '@/lib/types'
+import type { DailyMetricsResponse, MonthlyMetricsResponse, WeeklyMetricsResponse, CalendarResponse, DashboardOverview, TopicModeSummary } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 import { useAppContext } from '@/context/AppContext'
 import { sessionUtils } from '@/lib/sessionUtils'
@@ -16,8 +16,7 @@ import { sessionUtils } from '@/lib/sessionUtils'
 export default function Dashboard() {
     useAuthProtection()
     const { state } = useAppContext()
-    const displayName = state.authUser?.username ?? state.user ?? sessionUtils.getUsername() ?? 'User'
-
+const displayName = useMemo(() => state.authUser?.username ?? state.user ?? sessionUtils.getUsername() ?? 'User', [state.authUser, state.user])
     const [dir, setDir] = useState<"ltr" | "rtl">(() => {
         try {
             return (localStorage.getItem("dir") as "ltr" | "rtl") || "ltr"
@@ -53,7 +52,6 @@ export default function Dashboard() {
 
     const weekdays = useMemo(() => ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], [])
     const daysToShow = useMemo(() => (dir === "ltr" ? weekdays : [...weekdays].reverse()), [dir, weekdays])
-    const calendarToRender = [] as any[]
     const { toast } = useToast()
 
     // Performance / graph state
@@ -61,7 +59,7 @@ export default function Dashboard() {
     const [metricKey, setMetricKey] = useState<'accuracyScore' | 'pronunciationScore' | 'fluencyScore' | 'completenessScore' | 'attemptCount'>('accuracyScore')
     const [dailyMetrics, setDailyMetrics] = useState<DailyMetricsResponse | null>(null)
     const [monthlyMetrics, setMonthlyMetrics] = useState<MonthlyMetricsResponse | null>(null)
-    const [weeklyMetrics, setWeeklyMetrics] = useState<any | null>(null)
+    const [weeklyMetrics, setWeeklyMetrics] = useState<WeeklyMetricsResponse | null>(null)
     const [isLoadingGraph, setIsLoadingGraph] = useState(false)
     const [graphError, setGraphError] = useState<string | null>(null)
     const [graphDate, setGraphDate] = useState<string>(() => new Date().toISOString().slice(0, 10)) // YYYY-MM-DD
@@ -209,43 +207,73 @@ export default function Dashboard() {
     const renderCalendarCells = useCallback((cd: CalendarResponse): ReactNode[] => {
         const items: ReactNode[] = []
         const first = cd.calendarData[0]
-        const pad = first?.dayOfWeek ?? 0
+        // Base padding is the weekday index of the first day; for RTL mirror it across the week
+        const basePad = first?.dayOfWeek ?? 0
+        const pad = dir === 'ltr' ? basePad : (6 - basePad)
+        const days = dir === 'ltr' ? cd.calendarData : [...cd.calendarData].reverse()
+
+        // Leading pads
         for (let i = 0; i < pad; i++) {
             items.push(<div key={`pad-${i}-${pad}`} className="flex h-7 w-7 items-center justify-center rounded text-xs text-gray-300" />)
         }
-        cd.calendarData.forEach((d) => {
+
+        days.forEach((d) => {
             items.push(
-                <div key={d.date} className={`flex h-7 w-7 items-center justify-center rounded text-xs ${d.isToday ? 'ring-2 ring-blue-200' : ''}`}>
+                <div role="gridcell" key={d.date} className={`flex h-7 w-7 items-center justify-center rounded text-xs ${d.isToday ? 'ring-2 ring-blue-200' : ''}`}>
                     <div className="relative">
                         <span className={`${d.hasLogin ? 'bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded' : ''}`}>{d.day}</span>
                     </div>
                 </div>
             )
         })
+
+        // If grid is not a multiple of 7, add trailing pads so rows remain consistent
+        const remainder = items.length % 7
+        if (remainder !== 0) {
+            const trailing = 7 - remainder
+            for (let i = 0; i < trailing; i++) {
+                items.push(<div key={`pad-tr-${i}-${trailing}`} className="flex h-7 w-7 items-center justify-center rounded text-xs text-gray-300" />)
+            }
+        }
+
         return items
-    }, [])
+    }, [dir])
 
     // Helper to move months correctly in both LTR/RTL modes
-    const goToMonthOffset = (offset: number) => {
+    const goToMonthOffset = useCallback((offset: number) => {
         const d = new Date(calendarYear, calendarMonth - 1 + offset, 1)
         setCalendarYear(d.getFullYear())
         setCalendarMonth(d.getMonth() + 1)
-    }
+    }, [calendarYear, calendarMonth])
 
     const metricValuesForRender = useMemo(() => {
         if (timeframe === 'daily') {
             const arr = dailyMetrics?.graphData ?? []
-            return arr.map((p) => (metricKey === 'attemptCount' ? p.attemptCount : (p as any)[metricKey] ?? 0))
+            const vals = arr.map((p) => (metricKey === 'attemptCount' ? p.attemptCount : (p as any)[metricKey] ?? 0))
+            return dir === 'rtl' ? [...vals].reverse() : vals
         }
         if (timeframe === 'monthly') {
             const arr = monthlyMetrics?.graphData ?? []
-            return arr.map((p) => (metricKey === 'attemptCount' ? p.attemptCount : (p as any)[metricKey] ?? 0))
+            const vals = arr.map((p) => (metricKey === 'attemptCount' ? p.attemptCount : (p as any)[metricKey] ?? 0))
+            return dir === 'rtl' ? [...vals].reverse() : vals
         }
         const arr = weeklyMetrics?.graphData ?? []
-        return arr.map((p: any) => (metricKey === 'attemptCount' ? p.attemptCount : (p as any)[metricKey] ?? 0))
-    }, [timeframe, metricKey, dailyMetrics, monthlyMetrics, weeklyMetrics])
+        const vals = arr.map((p: any) => (metricKey === 'attemptCount' ? p.attemptCount : (p as any)[metricKey] ?? 0))
+        return dir === 'rtl' ? [...vals].reverse() : vals
+    }, [timeframe, metricKey, dailyMetrics, monthlyMetrics, weeklyMetrics, dir])
 
     const polylinePoints = useMemo(() => buildPolyline(metricValuesForRender), [buildPolyline, metricValuesForRender])
+
+    const xAxisLabels = useMemo(() => {
+        if (timeframe === 'daily') {
+            const arr = dailyMetrics?.graphData ?? Array.from({ length: 24 }, (_, i) => ({ time: `${String(i).padStart(2, '0')}:00` }))
+            const labels = arr.slice(0, 7).map((d: any) => d.time)
+            return dir === 'rtl' ? labels.reverse() : labels
+        }
+        const arr = timeframe === 'monthly' ? (monthlyMetrics?.graphData ?? []) : (weeklyMetrics?.graphData ?? [])
+        const labels = arr.slice(0, 7).map((d: any) => (d.date ? new Date(d.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : d.day))
+        return dir === 'rtl' ? labels.reverse() : labels
+    }, [timeframe, dailyMetrics, monthlyMetrics, weeklyMetrics, dir])
 
     const circlePoints = useMemo(() => {
         const vals = metricValuesForRender
@@ -357,6 +385,7 @@ export default function Dashboard() {
                                                 size="icon"
                                                 onClick={() => goToMonthOffset(dir === 'ltr' ? -1 : 1)}
                                                 title={dir === 'ltr' ? 'Previous month' : 'Next month'}
+                                                disabled={isCalendarLoading}
                                             >
                                                 {dir === 'ltr' ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                                             </Button>
@@ -366,13 +395,14 @@ export default function Dashboard() {
                                                 size="icon"
                                                 onClick={() => goToMonthOffset(dir === 'ltr' ? 1 : -1)}
                                                 title={dir === 'ltr' ? 'Next month' : 'Previous month'}
+                                                disabled={isCalendarLoading}
                                             >
                                                 {dir === 'ltr' ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                                             </Button>
                                         </div>
                                         <div className="text-xs text-gray-500">Monthly view</div>
                                     </div>
-                                    <div className="grid grid-cols-7 gap-1 text-center text-xs flex-1">
+                                    <div role="grid" aria-label="Monthly login calendar" dir={dir} className="grid grid-cols-7 gap-1 text-xs flex-1">
                                         {daysToShow.map((day) => (
                                             <div key={day} className="font-medium text-gray-500">{day}</div>
                                         ))}
@@ -405,7 +435,7 @@ export default function Dashboard() {
                                 <Button variant="link" className="text-blue-600 text-sm">
                                     <span dir="ltr" className="inline-flex items-center gap-1">
                                         {(overview?.topicModes ?? fallbackModes).length} <span className="text-xs">modes</span>
-                                        <ChevronRight className="h-3 w-3" />
+                                        {dir === 'ltr' ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" /> }
                                     </span>
                                 </Button>
                             </div>
@@ -483,11 +513,8 @@ export default function Dashboard() {
                                 {graphError && <div className="mt-2 text-xs text-red-600">{graphError}</div>}
                                 <div className="mt-2 flex justify-around text-xs text-gray-500">
                                     {/* x-axis labels based on timeframe */}
-                                    {timeframe === 'daily' && (dailyMetrics?.graphData ?? Array.from({ length: 24 }, (_, i) => ({ time: `${String(i).padStart(2, '0')}:00` }))).slice(0, 7).map((d, i) => (
-                                        <span key={i}>{d.time}</span>
-                                    ))}
-                                    {timeframe !== 'daily' && ((timeframe === 'monthly' ? (monthlyMetrics?.graphData ?? []) : (weeklyMetrics?.graphData ?? []))).slice(0, 7).map((d: any, i: number) => (
-                                        <span key={i}>{d.date ? new Date(d.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : d.day}</span>
+                                    {xAxisLabels.map((label, i) => (
+                                        <span key={i}>{label}</span>
                                     ))}
                                 </div>
                             </div>

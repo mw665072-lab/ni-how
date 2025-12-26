@@ -4,7 +4,7 @@ import type { InternalAxiosRequestConfig } from 'axios';
 import { getCookie, getCookies, setCookie, deleteCookie, hasCookie } from 'cookies-next';
 import { get } from 'node:http';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://5d0d463c2b65.ngrok-free.app/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://c066a5f770c5.ngrok-free.app/api';
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: false,

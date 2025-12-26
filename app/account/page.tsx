@@ -135,10 +135,10 @@ export default function AccountPage() {
                                         </div>
                                     ) : (
                                         <>
-                                            <Button size="sm" onClick={() => setEditing(true)}>Edit profile</Button>
-                                            <Link href="/account/coming-soon">
+                                            {/* <Button size="sm" onClick={() => setEditing(true)}>Edit profile</Button> */}
+                                            {/* <Link href="/account/coming-soon">
                                                 <Button variant="outline" size="sm">Change password</Button>
-                                            </Link>
+                                            </Link> */}
                                         </>
                                     )}
 
