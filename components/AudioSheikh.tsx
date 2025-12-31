@@ -192,6 +192,43 @@ export default function LanguageLearningInterface({
 
       <div className="py-2 flex justify-center gap-8 items-center relative flex-col">
         <div className="flex flex-col md:flex-row gap-4 w-full justify-center items-stretch">
+         
+
+          {/* Right Card: Target Phrase Info */}
+          {showDiv && (
+            <>
+             <Card
+            className="flex-shrink-0 flex flex-col items-center justify-center p-6 bg-[#DCFCE7]"
+            style={{
+              height: 230,
+              width: 319,
+              minHeight: 230,
+              borderRadius: '16px',
+              border: 'none',
+              boxShadow: 'none',
+            }}
+          >
+            <div className="flex flex-col items-center gap-4" dir="ltr">
+              <h2 className="text-3xl font-bold text-[#22C55E]">{targetPhrasePinyin}</h2>
+              <div className="flex items-center gap-2 dir-rtl">
+                <Volume2 className="w-5 h-5 text-gray-400" />
+                <span className="text-xl text-gray-700 font-medium">{targetPhraseChinese}</span>
+                <Button
+                  onClick={handlePronunciationPlay}
+                  size="icon"
+                  className="rounded-full bg-[#22C55E] hover:bg-green-600 w-10 h-10 ml-2"
+                >
+                  {isPronunciationPlaying ? (
+                    <Pause className="w-5 h-5 text-white" />
+                  ) : (
+                    <Play className="w-5 h-5 text-white ml-0.5" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </Card>
+            </>
+          )}
           <Card
             className="flex-shrink-0"
             style={{
@@ -217,43 +254,6 @@ export default function LanguageLearningInterface({
               className="rounded-2xl"
             />
           </Card>
-
-          {/* Right Card: Target Phrase Info */}
-          {showDiv && (
-            <>
-             <Card
-            className="flex-shrink-0 flex flex-col items-center justify-center p-6 bg-[#DCFCE7]"
-            style={{
-              height: 230,
-              width: 319,
-              minHeight: 230,
-              borderRadius: '16px',
-              border: 'none',
-              boxShadow: 'none',
-            }}
-          >
-            <div className="flex flex-col items-center gap-4">
-              <h2 className="text-3xl font-bold text-[#22C55E]">{targetPhrasePinyin}</h2>
-              <div className="flex items-center gap-2 dir-rtl">
-                <Volume2 className="w-5 h-5 text-gray-400" />
-                <span className="text-xl text-gray-700 font-medium">{targetPhraseChinese}</span>
-                <Button
-                  onClick={handlePronunciationPlay}
-                  size="icon"
-                  className="rounded-full bg-[#22C55E] hover:bg-green-600 w-10 h-10 ml-2"
-                >
-                  {isPronunciationPlaying ? (
-                    <Pause className="w-5 h-5 text-white" />
-                  ) : (
-                    <Play className="w-5 h-5 text-white ml-0.5" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </Card>
-            </>
-          )}
-         
         </div>
 
         <div className="flex flex-col items-center gap-2 mt-8">
