@@ -102,12 +102,15 @@ export default function SheikhPage() {
   return (
     <div dir="rtl" className="min-h-screen bg-white">
       <div className="px-4 py-6">
-        <ProgressBar progress={progress} 
-        onClick={()=>{
-          setSkipIntro(true);
-          setProgress(100);
-          router.push('/scenario');
-        }}
+        <ProgressBar
+          unit={sessionUtils.getCurrentTopic()?.chapter?.name || ""}
+          lesson={sessionUtils.getCurrentTopic()?.name || ""}
+          progress={progress}
+          onClick={() => {
+            setSkipIntro(true);
+            setProgress(100);
+            router.push('/scenario');
+          }}
         />
 
         <div className="mb-8">
@@ -150,7 +153,7 @@ export default function SheikhPage() {
 
           <Button
             onClick={handleNextClick}
-            disabled={ isNavigating || (!arabicCompleted && !skipIntro) }
+            disabled={isNavigating || (!arabicCompleted && !skipIntro)}
             className="flex-1 bg-[#636363] hover:bg-[#5a5a5a] text-white 
             h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
           >

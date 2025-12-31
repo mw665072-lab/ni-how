@@ -384,7 +384,11 @@ export default function ScenarioPage() {
   return (
     <div className="h-screen flex flex-col md:pb-0 pb-8 w-full md:px-8 px-8" dir="rtl">
       <audio ref={audioPlayerRef} className="hidden" />
-      <ProgressBar unit="الوحدة الأولى: الدرس الأول" progress={scenarioProgress} />
+      <ProgressBar
+        unit={sessionUtils.getCurrentTopic()?.chapter?.name || ""}
+        lesson={sessionUtils.getCurrentTopic()?.name || ""}
+        progress={scenarioProgress}
+      />
       <div className="flex-1 overflow-y-auto px-4 pb-24">
         <div className="flex flex-col items-center justify-center space-y-6">
           {isLoadingScenario ? (

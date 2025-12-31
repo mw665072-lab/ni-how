@@ -84,11 +84,10 @@ export default function UnitsPage() {
             return (
               <Card
                 key={chapter.id}
-                className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] ${
-                  chapter.status === "active"
+                className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] ${chapter.status === "active"
                     ? "cursor-pointer hover:shadow-xl transition-shadow"
                     : "cursor-not-allowed"
-                }`}
+                  }`}
                 style={{ backgroundColor: color }}
                 onClick={() => handleUnitClick(chapter)}
               >
@@ -115,7 +114,7 @@ export default function UnitsPage() {
                 </CardContent>
               </Card>
             );
-          })} 
+          })}
 
         {/* Static Locked Units */}
         {!loading && !error && (

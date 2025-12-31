@@ -31,7 +31,7 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [state.isAuthenticated, pathname, router]);
 
-  const handleLogout = () => {  
+  const handleLogout = () => {
     try {
       logout();
     } catch (err) {
@@ -75,10 +75,26 @@ export default function Header() {
           dir={dir}
         >
 
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="w-auto h-12 gap-3 flex items-center justify-center cursor-pointer">
+                <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center border-2 border-[#20672F] overflow-hidden">
+                  <User className="h-6 w-6 text-[#35AB4E]" />
+                </div>
+                <div className="text-white font-bold text-lg">
+                  {displayName}
+                </div>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleLogout}>تسجيل الخروج</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             variant="ghost"
             size="sm"
-            className="p-0 w-10 h-10 bg-white rounded-md flex items-center justify-center shadow-none"
+            className="p-0 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center shadow-none border border-white/10"
             onClick={() => {
               const open = !mobileMenuOpen;
               if (open) setSidebarOpen?.(false);
@@ -87,33 +103,11 @@ export default function Header() {
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5 text-gray-700" />
+              <X className="h-6 w-6 text-white" />
             ) : (
-              <Menu className="h-5 w-5 text-gray-700" />
+              <Menu className="h-6 w-6 text-white" />
             )}
           </Button>
-
-
-         
-
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="w-auto h-10 gap-4 rounded-full flex items-center justify-center cursor-pointer shadow-sm">
-                    <div className="flex-1 text-center">
-            <div className="text-white font-bold text-lg truncate">
-              {displayName}
-            </div>
-          </div>
-                <User className="h-8 w-8 text-[#35AB4E] rounded-full bg-white" />
-             
-              </div>
-              
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleLogout}>تسجيل الخروج</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
 
         {/* Mobile dropdown panel */}
