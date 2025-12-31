@@ -472,60 +472,41 @@ export default function ScenarioPage() {
                   ) : (
 
                     <div
-                      className={` p-4 transition-all duration-300 ${isRecording
-                        ? ""
-                        : ""
-                        }`}
+                      className={` p-4 transition-all duration-300 ${isRecording ? "" : ""}`}
                     >
-
-
-                      {isRecording ? (
-                        <div className="flex items-center justify-center">
-                          <button
-                            onClick={handleRecordClick}
-                            className={`bg-amber-100 rounded-[12px] w-auto px-8 h-[47px] transition-all duration-1000 ${!arabicCompleted
-                              ? "shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse"
-                              : ""
-                              }`}
-                            style={{
-                              paddingTop: 6,
-                              paddingRight: 16,
-                              paddingBottom: 6,
-                              paddingLeft: 16,
-                              gap: 14,
-                              borderBottom: "3px solid #997A05",
-                              opacity: 1,
-                              transform: "rotate(0deg)",
-                            }}                              >
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                              <Mic className="h-5 w-5" />
-                            </div>
-                            <span className="font-medium">إيقاف التسجيل</span>
-                          </button>
+                      <div className="flex items-center justify-center relative w-full">
+                        {/* Waveform Visualization (simplified placeholder or using a library if available, sticking to pure CSS for now) */}
+                        <div className="flex items-center justify-center gap-1 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full -z-10">
+                          {isRecording && (
+                            <>
+                              {[...Array(20)].map((_, i) => (
+                                <div key={i} className="w-1 bg-orange-300 rounded-full animate-pulse" style={{ height: Math.random() * 20 + 10 + 'px', animationDelay: Math.random() + 's' }}></div>
+                              ))}
+                            </>
+                          )}
                         </div>
-                      ) : (
-                        <div className="flex items-center justify-center">
-                          <button
-                            onClick={handleRecordClick}
-                            disabled={!arabicCompleted || !chineseCompleted}
-                            className={`bg-amber-100 rounded-[12px] w-auto px-8 h-[47px] transition-all duration-1000 ${!arabicCompleted
-                              ? "shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse"
-                              : ""
-                              }`}
-                            style={{
-                              paddingTop: 6,
-                              paddingRight: 16,
-                              paddingBottom: 6,
-                              paddingLeft: 16,
-                              gap: 14,
-                              borderBottom: "3px solid #997A05",
-                              opacity: 1,
-                              transform: "rotate(0deg)",
-                            }}                        >
-                            <Mic className="h-5 w-5" />
 
-                          </button>
+                        <button
+                          onClick={handleRecordClick}
+                          disabled={!arabicCompleted || !chineseCompleted}
+                          className={`rounded-full w-16 h-16 flex items-center justify-center transition-all duration-300 
+                                ${isRecording
+                              ? "bg-white border-4 border-orange-500 shadow-lg text-orange-500"
+                              : (!arabicCompleted ? "bg-[#FFF5CE] text-orange-400 border-2 border-orange-200" : "bg-white border-2 border-orange-500 text-orange-500 shadow-md hover:shadow-lg")
+                            }
+                            `}
+                        >
+                          {isRecording ? (
+                            <div className="w-6 h-6 bg-orange-500 rounded-sm" />
+                          ) : (
+                            <Mic className={`h-8 w-8 ${!arabicCompleted ? "opacity-50" : ""}`} />
+                          )}
+                        </button>
+                      </div>
+
+                      {isRecording && (
+                        <div className="text-center mt-4 text-sm text-gray-500">
+                          جاري التسجيل...
                         </div>
                       )}
                     </div>
@@ -541,7 +522,7 @@ export default function ScenarioPage() {
 
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="text-sm text-gray-700 truncate max-w-[160px] text-right" title={feedback}>{feedback}</div>
-                            <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
+              <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
             </div>
           </div>
         )}
@@ -549,46 +530,51 @@ export default function ScenarioPage() {
           className="p-2"
           dir="rtl"
         >
-          <div className="grid grid-cols-2 gap-1 px-1 md:flex md:items-center">
+          <div className="flex flex-col gap-3 px-1 w-full">
+            <div className="flex gap-3 w-full">
+              <Button
+                onClick={handleContinueClick}
+                disabled={
+                  (!recordedAudio && !hasSubmittedSuccessfully) ||
+                  isSubmitting ||
+                  !arabicCompleted ||
+                  !chineseCompleted
+                }
+                className="flex-[2] bg-[#22C55E] h-[50px] hover:bg-[#16A34A] text-white py-4 flex items-center justify-center gap-2.5 text-sm font-bold rounded-xl border-b-[4px] border-b-[#15803d] disabled:opacity-50 disabled:cursor-not-allowed disabled:border-none"
+              >
+                <span className="truncate">
+                  {isSubmitting
+                    ? "جاري الإرسال..."
+                    : hasSubmittedSuccessfully
+                      ? "استمر"
+                      : "إرسال"}
+                </span>
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ChevronLeft className="h-4 w-4" />
+                )}
+              </Button>
+
+              <Button
+                onClick={() => setIsFeedbackOpen(true)}
+                disabled={!lastAttemptScores}
+                className="flex-1 bg-[#E5E5E5] h-[50px] hover:bg-[#d4d4d4] text-gray-700 py-2 rounded-xl flex items-center justify-center gap-2 text-sm font-medium border-b-[4px] border-b-[#cecece] disabled:opacity-50 disabled:border-none"
+              >
+                <div className='relative'>
+                  {lastAttemptScores && <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>}
+                  <MessageSquare className="h-4 w-4" />
+                </div>
+                <span className="truncate">تغذية راجعة</span>
+              </Button>
+            </div>
+
             <Button
               onClick={() => setIsVideoModalOpen(true)}
-              className="order-3 md:order-1 col-span-2 md:flex-1 md:w-auto h-[50px] bg-[#FFCB08] hover:bg-green-600 text-black py-2 rounded-xl flex items-center justify-center gap-1 text-xs sm:text-sm"
+              className="w-full h-[50px] bg-[#FFCB08] hover:bg-[#E5B607] text-gray-900 py-2 rounded-xl flex items-center justify-center gap-2 text-sm font-medium border-b-[4px] border-b-[#E5B607]"
             >
-              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+              <BookOpen className="h-4 w-4" />
               <span className="truncate">دليل المستخدم</span>
-            </Button>
-
-            <Button
-              onClick={() => setIsFeedbackOpen(true)}
-              disabled={!lastAttemptScores}
-              className="order-2 md:order-2 w-full md:flex-1 md:w-auto bg-gray-200 h-[50px] hover:bg-gray-300 text-gray-800 py-2 rounded-xl flex items-center justify-center gap-1 text-xs sm:text-sm disabled:opacity-50"
-            >
-              <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="truncate">تغذية راجعة</span>
-            </Button>
-
-            <Button
-              onClick={handleContinueClick}
-              disabled={
-                (!recordedAudio && !hasSubmittedSuccessfully) ||
-                isSubmitting ||
-                !arabicCompleted ||
-                !chineseCompleted
-              }
-              className="order-1 md:order-3 w-full md:flex-[2] md:w-auto bg-[#636363] h-[50px] hover:bg-[#5a5a5a] text-white py-4 flex items-center justify-center gap-2.5 text-xs sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="truncate">
-                {isSubmitting
-                  ? "جاري الإرسال..."
-                  : hasSubmittedSuccessfully
-                    ? "استمر"
-                    : "إرسال"}
-              </span>
-              {isSubmitting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-              )}
             </Button>
           </div>
         </div>

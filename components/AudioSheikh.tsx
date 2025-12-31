@@ -172,43 +172,23 @@ export default function LanguageLearningInterface({
         <audio ref={chineseAudioRef} src={chineseAudioUrl} preload="metadata" />
       )}
 
-      <div
-        className={`bg-amber-100 rounded-[32px] w-[172px] h-[47px] transition-all duration-1000 ${!arabicCompleted
-          ? "shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse"
-          : ""
-          }`}
-        style={{
-          paddingTop: 6,
-          paddingRight: 16,
-          paddingBottom: 6,
-          paddingLeft: 16,
-          gap: 14,
-          borderBottom: "3px solid #997A05",
-          opacity: 1,
-          transform: "rotate(0deg)",
-        }}
+      <button
+        onClick={handleContextPlay}
+        className={`bg-[#FFCB08] hover:bg-[#E5B607] transition-all duration-300 rounded-full px-6 py-2 flex items-center gap-2 shadow-sm ${!arabicCompleted ? "animate-pulse" : ""}`}
+        disabled={!arabicAudioUrl}
       >
-        <div className="flex items-center justify-between">
-          <span className="text-gray-800 font-medium text-lg">جملة السياق</span>
-          <button
-            onClick={handleContextPlay}
-            className={`rounded-full p-2 transition-all duration-300 ${!arabicCompleted
-              ? "bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_15px_rgba(249,115,22,0.8)]"
-              : "bg-orange-500 hover:bg-orange-600 text-white"
-              }`}
-            disabled={!arabicAudioUrl}
-          >
-            {isContextPlaying ? (
-              <Pause className="h-3 w-3" />
-            ) : (
-              <Play className="h-3 w-3" />
-            )}
-          </button>
+        <div className="bg-white rounded-full p-1">
+          {isContextPlaying ? (
+            <Pause className="h-3 w-3 text-[#FFCB08]" />
+          ) : (
+            <Play className="h-3 w-3 text-[#FFCB08] ml-0.5" />
+          )}
         </div>
-      </div>
+        <span className="text-gray-900 font-medium text-sm">جملة السياق</span>
+      </button>
 
-      <div className="py-8 flex justify-center gap-8 items-center relative">
-        <div className="md:block hidden">
+      <div className="py-2 flex justify-center gap-8 items-center relative flex-col">
+        <div className="relative">
           <Card
             className="w-full max-w-md"
             style={{
@@ -257,15 +237,27 @@ export default function LanguageLearningInterface({
           </Card>
 
         </div>
-        <div className="relative">
-          <Image
-            src={scenarioImageUrl}
-            alt="Language Learning Character"
-            width={319}
-            height={319}
-            style={{ objectFit: 'contain' }}
-            className="mx-auto"
-          />
+
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <h1 className="text-3xl font-bold text-[#22C55E]">
+            {targetPhrasePinyin}
+          </h1>
+
+          <div className="flex items-center gap-2 dir-rtl">
+            <Volume2 className="w-4 h-4 text-gray-400" />
+            <span className="text-lg text-gray-700 font-medium">{targetPhraseChinese}</span>
+            <Button
+              onClick={handlePronunciationPlay}
+              size="icon"
+              className="rounded-full bg-[#22C55E] hover:bg-green-600 w-8 h-8 ml-2"
+            >
+              {isPronunciationPlaying ? (
+                <Pause className="w-4 h-4 text-white" />
+              ) : (
+                <Play className="w-4 h-4 text-white ml-0.5" />
+              )}
+            </Button>
+          </div>
         </div>
 
       </div>
