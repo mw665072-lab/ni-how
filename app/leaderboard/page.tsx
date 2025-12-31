@@ -90,7 +90,7 @@ export default function LeaderboardPage() {
     const rest = useMemo(() => entries.slice(3), [entries])
 
     return (
-        <div className="min-h-screen" >
+        <div className="min-h-screen" dir='rtl'>
             <div className="mx-auto w-full max-w-full mb-8 px-4 sm:px-4 lg:px-2">
                 <div className={`flex gap-2.5 w-full ${isRtl ? '' : 'justify-center md:justify-start'} mb-6`}>
                     <button
