@@ -49,6 +49,7 @@ export default function ScenarioPage() {
   const audioChunksRef = useRef<Blob[]>([]);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
   const [feedback, setFeedback] = useState<string>("");
+  const [showFeedbackWidget, setShowFeedbackWidget] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -89,6 +90,8 @@ export default function ScenarioPage() {
         setLastAttemptScores(null);
         setLastTranscription("");
         setIsFeedbackOpen(false);
+        setShowFeedbackWidget(false);
+        setFeedback("");
       }
     }
   }, [searchParams]);
@@ -175,6 +178,8 @@ export default function ScenarioPage() {
           setFeedbackScore(null);
           setLastAttemptScores(null);
           setLastTranscription("");
+          setShowFeedbackWidget(false);
+          setFeedback("");
         };
 
         mediaRecorder.start();
@@ -264,6 +269,13 @@ export default function ScenarioPage() {
 
           setLastAttemptScores(response.scores);
           setLastTranscription(response.transcription || "");
+
+          if (response.showTextFeedback && response.feedback?.textual) {
+            setShowFeedbackWidget(true);
+            setFeedback(response.feedback.textual);
+          } else {
+            setShowFeedbackWidget(false);
+          }
 
           // Update session-based progress to include this completed scenario
           const sessionDataAfter = sessionUtils.getCurrentSession();
@@ -390,7 +402,7 @@ export default function ScenarioPage() {
         lesson={sessionUtils.getCurrentTopic()?.name || ""}
         progress={scenarioProgress}
         title="يعود"
-        onClick={()=>{
+        onClick={() => {
           router.push('/units')
         }}
       />
@@ -523,14 +535,16 @@ export default function ScenarioPage() {
             </>
           )}
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 h-auto sm:h-[61px] py-2 px-4 bg-[#FFF5CE] rounded-tl-[16px] rounded-br-[16px] rounded-bl-[16px]">
-          <div className="text-sm font-medium text-gray-700 text-right truncate">تَعلِیق</div>
+        {showFeedbackWidget && (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 h-auto sm:h-[61px] py-2 px-4 bg-[#FFF5CE] rounded-tl-[16px] rounded-br-[16px] rounded-bl-[16px]">
+            <div className="text-sm font-medium text-gray-700 text-right truncate">تَعلِیق</div>
 
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
-            <div className="text-sm text-gray-700 truncate max-w-[160px] text-right">ليس جيدًا تمامًا</div>
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
+              <div className="text-sm text-gray-700 truncate max-w-[160px] text-right" title={feedback}>{feedback}</div>
+            </div>
           </div>
-        </div>
+        )}
         <div
           className="p-2"
           dir="rtl"
