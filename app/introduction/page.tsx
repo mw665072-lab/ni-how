@@ -140,8 +140,8 @@ export default function SheikhPage() {
           <Button
             variant="outline"
             onClick={handleUserGuideClick}
-            className="flex-1 bg-yellow-400 border-yellow-400 text-gray-800 hover:bg-yellow-500 
-            h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-[#E5E5E5] hover:text-gray-800 border-[#E5E5E5] text-gray-800 hover:bg-[#E5E5E5] 
+            h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <BookOpen className="h-5 w-5 ml-2" />
             دليل المستخدم
