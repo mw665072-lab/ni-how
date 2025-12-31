@@ -16,19 +16,19 @@ export default function Home() {
       // Give context time to load from storage
       const timer = setTimeout(() => {
         setIsLoading(false);
-        
+
         // If user is authenticated but hasn't completed onboarding
         if (state.isAuthenticated && !state.hasCompletedOnboarding) {
           // Stay on this page for onboarding
           return;
         }
-        
+
         // If user is authenticated and completed onboarding
         if (state.isAuthenticated && state.hasCompletedOnboarding) {
-          router.push('/units');
+          router.push('/student/dashboard');
           return;
         }
-        
+
         // If user is not authenticated, redirect to login
         if (!state.isAuthenticated) {
           router.push('/login');
@@ -44,7 +44,7 @@ export default function Home() {
     completeOnboarding(userName);
     setIsOnboardingComplete(true);
     // Redirect after onboarding
-    router.push('/units');
+    router.push('/student/dashboard');
   };
 
   if (isLoading) {
@@ -53,7 +53,7 @@ export default function Home() {
 
   // Only show onboarding if user is authenticated
   if (!state.isAuthenticated) {
-        router.push('/login');
+    router.push('/login');
   }
 
   return (

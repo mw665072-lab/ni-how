@@ -105,7 +105,7 @@ export default function RegisterPage() {
         });
 
         toast({ title: 'Success', description: 'Welcome to Ni Hao Now!' });
-        router.push('/introduction');
+        router.push('/student/dashboard');
       } catch (error: any) {
         console.error('Registration error:', error);
         const message = error?.response?.data?.message ?? error?.message ?? 'An unexpected error occurred';

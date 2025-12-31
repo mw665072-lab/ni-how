@@ -192,10 +192,9 @@ export default function LanguageLearningInterface({
           <Card
             className="w-full max-w-md"
             style={{
-              backgroundColor: '#D7EEDC',
               height: 230,
               width: 319,
-              minHeight: 319,
+              minHeight: 230,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -204,35 +203,20 @@ export default function LanguageLearningInterface({
               transform: 'rotate(0deg)',
               opacity: 1,
               borderRadius: '16px',
-              border: '1px solid #E5E5E5',
-              padding: '12px',
+              border: 'none',
+              padding: '0',
+              backgroundColor: 'transparent',
+              boxShadow: 'none',
             }}
           >
-            <div className="flex flex-col gap-3 items-center justify-center">
-              {/* Main greeting text */}
-              <h1 className="text-5xl font-bold text-green-500">
-                {targetPhrasePinyin}
-              </h1>
-
-              {/* Chinese characters with audio button */}
-              <div className="flex items-center gap-2 gap-3">
-                <span className="text-2xl text-gray-700 font-medium">{targetPhraseChinese}</span>
-                <Button
-                  onClick={handlePronunciationPlay}
-                  size="icon"
-                  className="rounded-full bg-green-500 hover:bg-green-600 w-10 h-10"
-                >
-                  <svg
-                    className="w-5 h-5 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </Button>
-                <Volume2 className="w-5 h-5 text-gray-400" />
-
-              </div>
+            <div className="relative w-full h-full">
+              <Image
+                src={scenarioImageUrl}
+                alt="Scenario Context"
+                fill
+                style={{ objectFit: 'contain' }}
+                className="rounded-2xl"
+              />
             </div>
           </Card>
 
