@@ -31,7 +31,7 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [state.isAuthenticated, pathname, router]);
 
-  const handleLogout = () => {
+  const handleLogout = () => {  
     try {
       logout();
     } catch (err) {

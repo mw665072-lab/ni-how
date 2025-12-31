@@ -54,6 +54,27 @@ export default function TopicsPage() {
     }
   };
 
+  // Colors for cards (user requested)
+  const colors = ['#F98D00', '#8DC743', '#CA495A', '#9CEDBC'];
+
+  const isLight = (hex: string) => {
+    const c = hex.replace('#', '');
+    const r = parseInt(c.substring(0, 2), 16);
+    const g = parseInt(c.substring(2, 4), 16);
+    const b = parseInt(c.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.7;
+  };
+
+  // Static locked topics to display after dynamic ones
+  const staticTopics = [
+    { title: 'الدرس الثاني', subtitle: 'متوسط' },
+    { title: 'الدرس الثالث', subtitle: 'متوسط' },
+    { title: 'الدرس الرابع', subtitle: 'متقدم' },
+    { title: 'الدرس الخامس', subtitle: 'متقدم' },
+    { title: 'الدرس السادس', subtitle: 'متقدم' },
+  ];
+
   return (
     <div className="min-h-screen bg-white" dir="rtl">
       {/* Content Section */}
@@ -92,132 +113,75 @@ export default function TopicsPage() {
         {!loading &&
           !error &&
           !sessionLoading &&
-          topics.map((topic) => (
-            <Card
-              key={topic.id}
-              className={`shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] ${
-                topic.status === "active"
-                  ? "cursor-pointer hover:shadow-xl transition-shadow"
-                  : "cursor-not-allowed"
-              }`}
-              onClick={() => handleTopicClick(topic)}
-            >
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  {/* Content */}
-                  <div className="flex-1 text-right">
-                    <h3 className={`text-xl font-bold mb-1 ${topic.status === "active" ? "text-gray-900" : "text-gray-500"}`}>
-                      {topic.title}
-                    </h3>
-                    <p className={`${topic.status === "active" ? "text-gray-600" : "text-gray-500"} text-sm`}>
-                      {topic.subtitle}
-                    </p>
+          topics.map((topic, idx) => {
+            const color = colors[idx % colors.length];
+            const light = isLight(color);
+            return (
+              <Card
+                key={topic.id}
+                className={`shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] ${
+                  topic.status === "active"
+                    ? "cursor-pointer hover:shadow-xl transition-shadow"
+                    : "cursor-not-allowed"
+                }`}
+                style={{ backgroundColor: color }}
+                onClick={() => handleTopicClick(topic)}
+              >
+                <CardContent className="p-0">
+                  <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
+                    {/* Content */}
+                    <div className="flex-1 text-right">
+                      <h3 className={`text-xl font-bold mb-1 ${topic.status === "active" ? (light ? 'text-gray-900' : 'text-white') : (light ? 'text-gray-500' : 'text-white')}`}>
+                        {topic.title}
+                      </h3>
+                      <p className={`${topic.status === "active" ? (light ? 'text-gray-600' : 'text-white') : (light ? 'text-gray-500' : 'text-white')} text-sm`}>
+                        {topic.subtitle}
+                      </p>
+                    </div>
+                    {/* Status Icon */}
+                    <div className="mr-4">
+                      {topic.status === "active" ? (
+                        <CheckCircle className={`h-6 w-6 ${light ? 'text-gray-700' : 'text-white'}`} />
+                      ) : (
+                        <Lock className={`h-6 w-6 ${light ? 'text-gray-400' : 'text-white'}`} />
+                      )}
+                    </div>
                   </div>
-                  {/* Status Icon */}
-                  <div className="mr-4">
-                    {topic.status === "active" ? (
-                      <CheckCircle className="h-6 w-6 text-gray-700" />
-                    ) : (
-                      <Lock className="h-6 w-6 text-gray-400" />
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
 
         {/* Static Locked Topics */}
         {!loading && !error && !sessionLoading && (
           <>
-            <Card className="shadow-lg shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الدرس الثاني
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متوسط
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الدرس الثالث
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متوسط
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الدرس الرابع
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متقدم
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الدرس الخامس
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متقدم
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الدرس السادس
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متقدم
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {staticTopics.map((topic, idx) => {
+              const color = colors[(topics.length + idx) % colors.length];
+              const light = isLight(color);
+              return (
+                <Card
+                  key={`static-${idx}`}
+                  className="shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] cursor-not-allowed"
+                  style={{ backgroundColor: color }}
+                >
+                  <CardContent className="p-0">
+                    <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
+                      <div className="flex-1 text-right">
+                        <h3 className={`${light ? 'text-gray-900' : 'text-white'} text-xl font-bold mb-1`}>
+                          {topic.title}
+                        </h3>
+                        <p className={`${light ? 'text-gray-600' : 'text-white'} text-sm`}>
+                          {topic.subtitle}
+                        </p>
+                      </div>
+                      <div className="mr-4">
+                        <Lock className={`h-6 w-6 ${light ? 'text-gray-400' : 'text-white'}`} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </>
         )}
       </div>

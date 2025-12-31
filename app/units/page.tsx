@@ -20,6 +20,28 @@ export default function UnitsPage() {
     }
   };
 
+  // Colors provided by the user
+  const colors = ['#F98D00', '#8DC743', '#CA495A', '#9CEDBC'];
+
+  // Simple luminance check to decide whether to use light or dark text on a color
+  const isLight = (hex: string) => {
+    const c = hex.replace('#', '');
+    const r = parseInt(c.substring(0, 2), 16);
+    const g = parseInt(c.substring(2, 4), 16);
+    const b = parseInt(c.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.7;
+  };
+
+  // Static units to display after dynamic ones
+  const staticUnits = [
+    { title: 'الوحدة الثانية', subtitle: 'متوسط' },
+    { title: 'الوحدة الثالثة', subtitle: 'متوسط' },
+    { title: 'الوحدة الرابعة', subtitle: 'متقدم' },
+    { title: 'الوحدة الخامسة', subtitle: 'متقدم' },
+    { title: 'الوحدة السادسة', subtitle: 'متقدم' },
+  ];
+
   return (
     <div className="min-h-screen bg-white" dir="rtl">
 
@@ -56,131 +78,75 @@ export default function UnitsPage() {
         {/* Dynamic Units from API */}
         {!loading &&
           !error &&
-          chapters.map((chapter) => (
-            <Card
-              key={chapter.id}
-              className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] ${
-                chapter.status === "active"
-                  ? "cursor-pointer hover:shadow-xl transition-shadow"
-                  : "cursor-not-allowed"
-              }`}
-              onClick={() => handleUnitClick(chapter)}
-            >
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  {/* Content */}
-                  <div className="flex-1 text-right">
-                    <h3 className={`text-xl font-bold mb-1 ${chapter.status === "active" ? "text-gray-900" : "text-gray-500"}`}>
-                      {chapter.title}
-                    </h3>
-                    <p className={`${chapter.status === "active" ? "text-gray-600" : "text-gray-500"} text-sm`}>
-                      {chapter.subtitle}
-                    </p>
+          chapters.map((chapter, idx) => {
+            const color = colors[idx % colors.length];
+            const light = isLight(color);
+            return (
+              <Card
+                key={chapter.id}
+                className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] ${
+                  chapter.status === "active"
+                    ? "cursor-pointer hover:shadow-xl transition-shadow"
+                    : "cursor-not-allowed"
+                }`}
+                style={{ backgroundColor: color }}
+                onClick={() => handleUnitClick(chapter)}
+              >
+                <CardContent className="p-0">
+                  <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
+                    {/* Content */}
+                    <div className="flex-1 text-right">
+                      <h3 className={`text-xl font-bold mb-1 ${light ? 'text-gray-900' : 'text-white'}`}>
+                        {chapter.title}
+                      </h3>
+                      <p className={`${light ? 'text-gray-700' : 'text-white'} text-sm`}>
+                        {chapter.subtitle}
+                      </p>
+                    </div>
+                    {/* Status Icon */}
+                    <div className="mr-4">
+                      {chapter.status === "active" ? (
+                        <CheckCircle className={`h-6 w-6 ${light ? 'text-gray-700' : 'text-white'}`} />
+                      ) : (
+                        <Lock className={`h-6 w-6 ${light ? 'text-gray-400' : 'text-white'}`} />
+                      )}
+                    </div>
                   </div>
-                  {/* Status Icon */}
-                  <div className="mr-4">
-                    {chapter.status === "active" ? (
-                      <CheckCircle className="h-6 w-6 text-gray-700" />
-                    ) : (
-                      <Lock className="h-6 w-6 text-gray-400" />
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })} 
 
         {/* Static Locked Units */}
         {!loading && !error && (
           <>
-            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الوحدة الثانية
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متوسط
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-9 md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الوحدة الثالثة
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متوسط
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-9 md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الوحدة الرابعة
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متقدم
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg rounded-lg border shadow-lg py-2 h-auto border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-                <div className="h-9 md:h-auto md:py-4 px-3 flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الوحدة الخامسة
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متقدم
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
-              <CardContent className="p-0">
-<div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
-                      الوحدة السادسة
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      متقدم
-                    </p>
-                  </div>
-                  <div className="mr-4">
-                    <Lock className="h-6 w-6 text-gray-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {staticUnits.map((unit, idx) => {
+              const color = colors[(chapters.length + idx) % colors.length];
+              const light = isLight(color);
+              return (
+                <Card
+                  key={`static-${idx}`}
+                  className="shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] cursor-not-allowed"
+                  style={{ backgroundColor: color }}
+                >
+                  <CardContent className="p-0">
+                    <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
+                      <div className="flex-1 text-right">
+                        <h3 className={`${light ? 'text-gray-900' : 'text-white'} text-xl font-bold mb-1`}>
+                          {unit.title}
+                        </h3>
+                        <p className={`${light ? 'text-gray-700' : 'text-white'} text-sm`}>
+                          {unit.subtitle}
+                        </p>
+                      </div>
+                      <div className="mr-4">
+                        <Lock className={`h-6 w-6 ${light ? 'text-gray-400' : 'text-white'}`} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </>
         )}
       </div>
