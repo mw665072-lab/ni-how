@@ -47,14 +47,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const [dir, setDirState] = useState<"ltr" | "rtl">(() => {
     try {
-      if (typeof window === 'undefined') return 'rtl'
-      const stored = localStorage.getItem('dir') as "ltr" | "rtl" | null
-      if (stored) return stored
-      return (document.documentElement?.dir as "ltr" | "rtl") || 'rtl'
+      // Default to RTL. On the server we can't access localStorage or document.
+      if (typeof window === 'undefined') return 'rtl';
+
+      // Use stored preference if available
+      const stored = localStorage.getItem('dir') as "ltr" | "rtl" | null;
+      if (stored === 'ltr' || stored === 'rtl') return stored;
+
+      // Fall back to document direction if present
+      const docDir = document.documentElement?.dir as "ltr" | "rtl" | undefined;
+      if (docDir === 'ltr' || docDir === 'rtl') return docDir;
+
+      // Final default
+      return 'rtl';
     } catch (err) {
-      return 'rtl'
+      return 'rtl';
     }
-  })
+  });
 
   const setDir = (d: "ltr" | "rtl") => {
     try {

@@ -540,8 +540,8 @@ export default function ScenarioPage() {
             <div className="text-sm font-medium text-gray-700 text-right truncate">تَعلِیق</div>
 
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
               <div className="text-sm text-gray-700 truncate max-w-[160px] text-right" title={feedback}>{feedback}</div>
+                            <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
             </div>
           </div>
         )}
