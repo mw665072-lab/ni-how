@@ -103,46 +103,45 @@ export default function AccountPage() {
 
     return (
         <div className="min-h-screen bg-white" dir={dir} lang={dir === 'rtl' ? 'ar' : 'en'}>
-            <div className="max-w-full mx-auto px-2 sm:px-6">
-                <h1 className={`${dir === 'rtl' ? 'text-right' : 'text-left'} font-almarai-extrabold-28 mb-8`}>مرحبًا بعودتك</h1>
+            <div className="max-w-full mx-auto px-4 py-6">
+                <h1 className={`${dir === 'rtl' ? 'text-right' : 'text-left'} text-xl font-bold mb-4`}>
+                    {dir === 'rtl' ? 'الحساب' : 'Account'}
+                </h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card className="flex flex-col justify-between w-full h-auto px-4 py-6 gap-6 rounded-2xl border-2 border-slate-200 bg-white shadow-lg overflow-hidden">
-                        <CardHeader>
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-4">
-                                    <Avatar aria-label={`Avatar for ${user?.username ?? user?.email ?? 'user'}`}>
-                                        <AvatarFallback>{initials}</AvatarFallback>
-                                    </Avatar>
-                                    <div className={dir === 'rtl' ? 'text-right' : 'text-left'}>
-                                        <h2 className="text-lg font-medium">{user?.username ?? 'Guest'}</h2>
-                                        <p className="text-sm text-muted-foreground">{user?.email ?? 'Not signed in'}</p>
+                <Card className="border border-slate-200 rounded-lg shadow-sm">
+                    <CardContent className="p-4">
+                        <div className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} items-center justify-between gap-4`}>
+                            {/* Left side: Avatar and user info */}
+                            <div className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} items-center gap-3 flex-1`}>
+                                <Avatar className="h-12 w-12" aria-label={`Avatar for ${user?.username ?? user?.email ?? 'user'}`}>
+                                    <AvatarFallback className="text-sm bg-[#35AB4E] text-white font-semibold">{initials}</AvatarFallback>
+                                </Avatar>
+                                <div className={`flex-1 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
+                                    <h2 className="text-base font-semibold">{user?.username ?? 'Guest'}</h2>
+                                    <p className="text-xs text-slate-500">{user?.email ?? 'Not signed in'}</p>
+                                </div>
+                            </div>
+
+                            {/* Right side: Stats and Logout */}
+                            <div className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} items-center gap-3`}>
+                                
+                                {loading && (
+                                    <div className="text-xs text-slate-500 px-3">
+                                        {dir === 'rtl' ? 'جاري التحميل...' : 'Loading...'}
                                     </div>
-                                </div>
+                                )}
+
+                                <LogoutButton />
                             </div>
-                        </CardHeader>
+                        </div>
 
-                        <CardContent>
-                            <div className="flex flex-col gap-3">
-                                <div className="flex flex-wrap gap-2 items-center">
-                                    {editing ? (
-                                        <div className="flex gap-2 items-center">
-                                            <input className="input px-2 py-1 rounded border" value={nameInput} onChange={e => setNameInput(e.target.value)} />
-                                            <Button size="sm" className="bg-[#35AB4E] hover:bg-[#2f9c46] text-white border-b-2" onClick={saveName}>Save</Button>
-                                            <Button variant="ghost" size="sm" onClick={() => { setEditing(false); setNameInput(user?.username ?? '') }}>Cancel</Button>
-                                        </div>
-                                    ) : (
-                                        <div />
-                                    )}
-
-                                    <LogoutButton />
-                                </div>
-
-                                <p className="text-sm text-muted-foreground">Manage your profile, change password, and sign out from here.</p>
+                        {error && (
+                            <div className="text-xs text-red-500 mt-3">
+                                {error}
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </div>
     )

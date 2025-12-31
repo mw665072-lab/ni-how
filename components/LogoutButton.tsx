@@ -13,10 +13,10 @@ export default function LogoutButton() {
   const handleLogout = async () => {
     try {
       await logout();
-      toast({
-        title: 'Success',
-        description: 'You have been logged out',
-      });
+      // toast({
+      //   title: 'Success',
+      //   description: 'You have been logged out',
+      // });
       router.push('/login');
       // Reset logout state after a short delay to ensure navigation completes
       setTimeout(() => {
@@ -39,6 +39,7 @@ export default function LogoutButton() {
       onClick={handleLogout}
       variant="outline"
       size="sm"
+      className="h-8 px-3 text-xs border-slate-300"
     >
       Logout
     </Button>
