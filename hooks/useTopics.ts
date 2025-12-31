@@ -52,7 +52,7 @@ export const useTopics = (chapterId: number | null): UseTopicsReturn => {
         title: topic.name,
         subtitle: topic.subtitle, // Use subtitle from API response
         color: getTopicColor(index),
-        status: index === 0 ? "active" as const : "locked" as const,
+        status: index === 0 ? "active" as const : "active" as const,
         progress: index === 0 ? 80 : undefined,
       }));
       
