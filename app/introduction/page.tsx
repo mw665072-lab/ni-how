@@ -47,24 +47,10 @@ export default function SheikhPage() {
   // intro shows only Arabic recording — change this if the intro scenario requires Chinese as well
   const showChineseRecording = false;
 
-  const computeAndSetProgress = (audioPct = 0) => {
-    const totalSteps = showChineseRecording ? 2 : 1;
-    const completedCount = (arabicCompleted ? 1 : 0) + (chineseCompleted ? 1 : 0);
-    let activeFraction = 0;
-
-    // Determine which step is active: arabic first, then chinese (if enabled)
-    if (!arabicCompleted) {
-      activeFraction = audioPct / 100;
-    } else if (showChineseRecording && !chineseCompleted) {
-      activeFraction = audioPct / 100;
-    }
-
-    const value = Math.round(((completedCount + activeFraction) / totalSteps) * 100);
-    setProgress(value);
-  };
-
-  const handleAudioProgress = (audioPct: number) => {
-    computeAndSetProgress(audioPct);
+  // During the introduction we don't base the progress bar on audio playback.
+  // Keep it unchanged while audio plays; only set to 100% when the entire introduction is complete.
+  const handleAudioProgress = (_audioPct: number) => {
+    // no-op: audio playback should not affect the introduction progress bar
   };
 
   const handleRecordingCompleted = (type: "arabic" | "chinese") => {
@@ -74,8 +60,14 @@ export default function SheikhPage() {
       setChineseCompleted(true);
     }
 
-    // ensure progress reflects the completed step
-    computeAndSetProgress(0);
+    // compute completion based on updated values (use 'type' to infer the immediate change)
+    const arabicDone = type === "arabic" ? true : arabicCompleted;
+    const chineseDone = type === "chinese" ? true : chineseCompleted;
+    const introCompleteNow = arabicDone && (!showChineseRecording ? true : chineseDone);
+
+    if (introCompleteNow) {
+      setProgress(100);
+    }
   };
 
   const handleNextClick = async () => {
@@ -98,6 +90,8 @@ export default function SheikhPage() {
   const handleCloseVideoModal = () => {
     setIsVideoModalOpen(false);
   };
+
+  const introComplete = arabicCompleted && (!showChineseRecording || chineseCompleted);
 
   return (
     <div dir="rtl" className="min-h-screen bg-white">
@@ -154,7 +148,7 @@ export default function SheikhPage() {
 
           <Button
             onClick={handleNextClick}
-            disabled={isNavigating || (!arabicCompleted && !skipIntro)}
+            disabled={isNavigating || (!introComplete && !skipIntro)}
             className="flex-1 bg-[#636363] hover:bg-[#5a5a5a] text-white 
             h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
           >
