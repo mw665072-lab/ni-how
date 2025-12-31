@@ -42,6 +42,15 @@ axiosInstance.interceptors.response.use(
     (res) => res,
     (error: AxiosError): Promise<never> => {
         if (error.response) {
+            if (error.response.status === 401) {
+                // If we get a 401, the token is likely invalid or user doesn't exist.
+                // Clear the token and redirect to login.
+                deleteCookie('authToken');
+                if (typeof window !== 'undefined') {
+                    window.location.href = '/login';
+                }
+            }
+
             const err: NormalizedAxiosError = new Error(
                 (error.response.data as { message?: string })?.message ||
                 `HTTP error! status: ${error.response.status}`

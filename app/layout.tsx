@@ -21,9 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <AppProvider>
-         <Layout>{children}</Layout>
+          <Layout>{children}</Layout>
         </AppProvider>
         <Toaster />
       </body>
