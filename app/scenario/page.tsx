@@ -577,14 +577,13 @@ export default function ScenarioPage() {
           </div>
         )}
         <div
-          className="p-2"
-          dir="rtl"
+          className="px-4 pb-20 md:pb-24"
         >
-          <div className="flex justify-center gap-4 w-full items-center">
+          <div className="flex flex-wrap justify-center gap-3 w-full items-center">
             {/* Yellow User Guide Button */}
             <Button
               onClick={() => setIsVideoModalOpen(true)}
-              className="w-48 bg-[#FFCB08] h-14 hover:bg-[#FFCB08] text-[#1F1F1F] py-4 rounded-2xl flex items-center justify-center gap-3 text-lg font-bold border-b-[4px] border-b-[#DEA407] shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
+              className="flex-1 min-w-[140px] md:flex-none md:w-48 bg-[#FFCB08] h-14 hover:bg-[#FFCB08] text-[#1F1F1F] py-4 rounded-2xl flex items-center justify-center gap-3 text-lg font-bold border-b-[4px] border-b-[#DEA407] shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
             >
               <BookOpen className="h-5 w-5 stroke-[2.5px]" />
               <span className="truncate">دليل المستخدم</span>
@@ -594,7 +593,7 @@ export default function ScenarioPage() {
             <Button
               onClick={() => setIsFeedbackOpen(true)}
               disabled={!lastAttemptScores}
-              className="w-48 bg-[#E5E5E5] h-14 hover:bg-[#E5E5E5] text-[#1F1F1F] py-4 rounded-2xl flex items-center justify-center gap-3 text-lg font-bold border-b-[4px] border-b-[#C4C4C4] disabled:opacity-50 disabled:border-none shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
+              className="flex-1 min-w-[140px] md:flex-none md:w-48 bg-[#E5E5E5] h-14 hover:bg-[#E5E5E5] text-[#1F1F1F] py-4 rounded-2xl flex items-center justify-center gap-3 text-lg font-bold border-b-[4px] border-b-[#C4C4C4] disabled:opacity-50 disabled:border-none shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
             >
               <div className='relative'>
                 {lastAttemptScores && <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>}
@@ -612,7 +611,7 @@ export default function ScenarioPage() {
                 isSubmitting ||
                 (!currentScenario?.isIntroduction && !arabicCompleted)
               }
-              className="w-48 bg-[#35AB4E] h-14 hover:bg-[#35AB4E] text-white py-4 flex items-center justify-center gap-3 text-lg font-bold rounded-2xl border-b-[4px] border-b-[#298E3E] disabled:opacity-50 disabled:cursor-not-allowed disabled:border-none shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
+              className="w-full md:w-48 bg-[#35AB4E] h-14 hover:bg-[#35AB4E] text-white py-4 flex items-center justify-center gap-3 text-lg font-bold rounded-2xl border-b-[4px] border-b-[#298E3E] disabled:opacity-50 disabled:cursor-not-allowed disabled:border-none shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
             >
               <span className="truncate">
                 {isSubmitting

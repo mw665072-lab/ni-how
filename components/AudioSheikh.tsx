@@ -201,6 +201,7 @@ export default function LanguageLearningInterface({
         <div className="flex flex-col md:flex-row gap-4 w-full justify-center items-stretch">
 
 
+
           {/* Right Card: Target Phrase Info */}
           {showDiv && (
             <>
@@ -239,9 +240,10 @@ export default function LanguageLearningInterface({
           <Card
             className="flex-shrink-0"
             style={{
-              height: imageHeight,
-              width: imageWidth,
-              minHeight: imageHeight,
+              height: 'auto',
+              width: '100%',
+              maxWidth: imageWidth,
+              aspectRatio: '1/1',
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
@@ -253,42 +255,40 @@ export default function LanguageLearningInterface({
               overflow: 'hidden'
             }}
           >
-            <Image
-              src={scenarioImageUrl}
-              alt="Scenario Context"
-              fill
-              style={{ objectFit: 'contain' }}
-              className="rounded-2xl"
-            />
+            <div className="relative w-full aspect-square">
+              <Image
+                src={scenarioImageUrl}
+                alt="Scenario Context"
+                fill
+                style={{ objectFit: 'contain' }}
+                className="rounded-2xl"
+              />
+            </div>
           </Card>
         </div>
 
 
-        <div className={`flex ${!showDiv ? "" : "md:hidden"}  flex-col items-center gap-2 mt-8`}>
-          {/* <h1 className="text-4xl font-bold text-[#22C55E]">
-            {targetPhrasePinyin}
-          </h1> */}
+        {/* Mobile Chinese Text & Audio - Matches Screenshot */}
+        <div className={`flex ${!showDiv ? "" : "md:hidden"} flex-col items-center gap-1 mt-4`}>
+          {/* Main Chinese Text */}
+          <h1 className="text-4xl font-bold text-[#22C55E] mb-1">
+            {targetPhraseChinese}
+          </h1>
 
-          <div className="flex items-center gap-2 dir-rtl">
-            <Button
+          {/* Audio Row: Icon + Pinyin + Play Button */}
+          <div className="flex items-center justify-center gap-3 text-gray-500">
+            <Volume2 className="w-5 h-5 opacity-60" />
+            <span className="text-xl font-medium text-gray-600">{targetPhrasePinyin}</span>
+            <button
               onClick={handlePronunciationPlay}
-              size="icon"
-              className="rounded-full bg-[#22C55E] hover:bg-green-600 w-10 h-10 ml-2"
+              className="w-8 h-8 rounded-full bg-[#35AB4E] flex items-center justify-center shadow-md active:scale-95 transition-transform"
             >
               {isPronunciationPlaying ? (
-                <Pause className="w-5 h-5 text-white" />
+                <Pause className="w-4 h-4 text-white fill-current" />
               ) : (
-                <Play className="w-5 h-5 text-white ml-0.5"
-                  onClick={() => {
-                    handlePronunciationPlay();
-                  }}
-                />
+                <Play className="w-4 h-4 text-white fill-current ml-0.5" />
               )}
-            </Button>
-            <span className="text-2xl text-gray-700 font-medium">{targetPhraseChinese}</span>
-
-            <Volume2 className="w-5 h-5 text-gray-400" />
-
+            </button>
           </div>
         </div>
 

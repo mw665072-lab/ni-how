@@ -2,12 +2,16 @@
 import DashboardCard from "@/components/dashboard/card"
 import { ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import ArabicStatsChart from "@/components/dashboard/charts"
 import { dashboardApi } from "@/lib/services/dashboard"
+import { sessionsApi } from "@/lib/api"
+import { sessionUtils } from "@/lib/sessionUtils"
 import type { DashboardOverview, TopicProgress, DailyMetricsResponse, WeeklyMetricsResponse, MonthlyMetricsResponse } from "@/lib/types"
 
 export default function Page() {
+    const router = useRouter()
     const [overview, setOverview] = useState<DashboardOverview | null>(null)
     const [topicProgress, setTopicProgress] = useState<TopicProgress[]>([])
     const [dailyMetrics, setDailyMetrics] = useState<DailyMetricsResponse | null>(null)
@@ -16,6 +20,20 @@ export default function Page() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [active, setActive] = useState('daily')
+    const [startingSession, setStartingSession] = useState<number | null>(null)
+
+    const handleContinue = async (topicId: number) => {
+        try {
+            setStartingSession(topicId)
+            const session = await sessionsApi.start({ topicId })
+            sessionUtils.setCurrentSession(session)
+            router.push('/scenario')
+        } catch (error) {
+            console.error("Failed to start session:", error)
+        } finally {
+            setStartingSession(null)
+        }
+    }
 
     const tabs = [
         { key: 'daily', label: 'يومي' },
@@ -95,32 +113,44 @@ export default function Page() {
             <div className="max-w-full mx-auto px-2 sm:px-6">
                 <h1 className="text-right font-almarai-extrabold-28 mb-8 hidden sm:block">مرحبًا بعودتك يا {userName}</h1>
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8 items-stretch">
-                    <div className="flex flex-col w-full col-span-2 sm:col-span-2 lg:col-span-1 h-auto sm:h-64 md:h-72 lg:h-80 px-4 py-6 gap-6 rounded-2xl border-2 border-slate-200 bg-white shadow-lg overflow-hidden">
-                        <div className="text-right flex md:flex-row flex-col flex-shrink-0 justify-between items-center w-full">
+                    <div className="relative flex flex-col items-center justify-center text-center w-full h-[140px] sm:h-56 md:h-60 lg:h-64 py-4 gap-3 rounded-[16px] border-2 border-transparent bg-[#FBD4D3] shadow-sm">
+                        <Image src="/images/start.png" alt="decor" width={56} height={56} className="absolute left-2 sm:left-2 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
+                        <div className="relative z-10">
+                            <p className="text-sm sm:text-base font-bold mb-1">أطول خط</p>
+                            <h3 className="text-4xl sm:text-5xl font-extrabold mb-1">{longestStreak}</h3>
+                            <p className="text-sm sm:text-base">أيام</p>
+                        </div>
+                    </div>
+
+                    <div className="relative flex flex-col items-center justify-center text-center w-full h-[140px] sm:h-56 md:h-60 lg:h-64 py-4 gap-3 rounded-[16px] border-2 border-transparent bg-[#FFF5CE] shadow-sm">
+                        <Image src="/images/fire.png" alt="decor" width={56} height={56} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
+                        <div className="relative z-10">
+                            <p className="text-sm sm:text-base font-bold mb-1"> الخط الحالي</p>
+                            <h3 className="text-4xl sm:text-5xl font-extrabold mb-1">{currentStreak}</h3>
+                            <p className="text-sm sm:text-base">أيام</p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col w-full col-span-2 sm:col-span-2 lg:col-span-1 h-auto sm:h-56 md:h-60 lg:h-64 px-4 py-6 gap-6 rounded-2xl border-2 border-slate-200 bg-white shadow-lg overflow-hidden">
+                        <div className="text-right flex md:flex-row flex-col flex-shrink-0 justify-between items-start md:items-center w-full gap-3">
                             <div>
-                                <h4 className="font-almarai-extrabold mb-4">المقاييس الرئيسية</h4>
+                                <h4 className="font-almarai-extrabold text-base">المقاييس الرئيسية</h4>
                             </div>
-                            <div className="flex flex-wrap gap-2.5">
+                            <div className="flex gap-2">
                                 {tabs.map((tab) => (
                                     <button
                                         key={tab.key}
                                         onClick={() => setActive(tab.key)}
-                                        aria-pressed={active === tab.key}
-                                        className={`h-8 pt-[6px] pr-[12px] pb-[6px] pl-[12px] rounded-full text-sm transition ${active === tab.key ? 'text-white' : 'text-slate-700'}`}
-                                        style={{
-                                            backgroundColor: active === tab.key ? '#35AB4E' : '#E5E5E5',
-                                            borderBottom: active === tab.key ? '2px solid #20672F' : 'none',
-                                            transform: 'rotate(0deg)',
-                                            opacity: 1,
-                                        }}
+                                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${active === tab.key
+                                            ? 'bg-[#35AB4E] text-white'
+                                            : 'bg-[#E5E5E5] text-slate-700'
+                                            }`}
                                     >
                                         {tab.label}
                                     </button>
                                 ))}
                             </div>
-
                         </div>
-                        {/* Map daily metrics to chart data */}
                         {(() => {
                             const currentMetrics =
                                 active === 'monthly' ? monthlyMetrics :
@@ -151,23 +181,6 @@ export default function Page() {
                         })()}
 
 
-                    </div>
-                    <div className="relative flex flex-col items-center justify-center text-center w-full h-[155px] sm:h-64 md:h-72 lg:h-80 py-4 gap-4 rounded-[16px] border-2 border-transparent bg-[#FFF5CE] shadow-sm">
-                        <Image src="/images/fire.png" alt="decor" width={56} height={56} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
-                        <div className="relative z-10">
-                            <p className="text-sm sm:text-base font-bold mb-1"> الخط الحالي</p>
-                            <h3 className="text-4xl sm:text-5xl font-extrabold mb-1">{currentStreak}</h3>
-                            <p className="text-sm sm:text-base">أيام</p>
-                        </div>
-                    </div>
-
-                    <div className="relative flex flex-col items-center justify-center text-center w-full h-[155px] sm:h-64 md:h-72 lg:h-80 py-4 gap-3 rounded-[16px] border-2 border-transparent bg-[#FBD4D3] shadow-sm">
-                        <Image src="/images/start.png" alt="decor" width={56} height={56} className="absolute left-2 sm:left-2 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
-                        <div className="relative z-10">
-                            <p className="text-sm sm:text-base font-bold mb-1">أطول خط</p>
-                            <h3 className="text-4xl sm:text-5xl font-extrabold mb-1">{longestStreak}</h3>
-                            <p className="text-sm sm:text-base">أيام</p>
-                        </div>
                     </div>
                 </div>
 
@@ -203,7 +216,7 @@ export default function Page() {
                                     </div>
 
                                     <div className="flex items-center justify-between">
-                                        <div className="flex gap-1.5">
+                                        <div className="flex gap-2 flex-wrap">
                                             {[...Array(topic.totalScenarios)].map((_, i) => (
                                                 <div
                                                     key={i}
@@ -212,9 +225,13 @@ export default function Page() {
                                                 />
                                             ))}
                                         </div>
-                                        <button className="h-10 px-4 bg-[#35AB4E] hover:bg-[#2f9c46] text-white text-sm font-bold rounded-lg border-b-2 border-[#20672F] flex items-center gap-2 transition active:translate-y-[1px] active:border-b-0">
+                                        <button
+                                            onClick={() => handleContinue(topic.id)}
+                                            disabled={startingSession === topic.id}
+                                            className={`h-10 px-4 bg-[#35AB4E] hover:bg-[#2f9c46] text-white text-sm font-bold rounded-lg border-b-2 border-[#20672F] flex items-center gap-2 transition active:translate-y-[1px] active:border-b-0 ${startingSession === topic.id ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                        >
                                             <ChevronRight className="w-4 h-4 ml-[-4px]" />
-                                            متابعة
+                                            {startingSession === topic.id ? 'جاري التحميل...' : 'متابعة'}
                                         </button>
                                     </div>
                                 </div>

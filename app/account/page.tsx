@@ -1,145 +1,81 @@
 "use client"
 
-import React, { useEffect, useState, useCallback } from "react"
+import React, { useEffect, useState } from "react"
 import { useAuthProtection, useAuth } from "@/hooks/useAuthProtection"
-import { useAppContext } from '@/context/AppContext'
 import { useDirection } from '@/hooks/useDirection'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import LogoutButton from "@/components/LogoutButton"
-import { dashboardApi } from "@/lib/services/dashboard"
-import { useToast } from '@/hooks/use-toast'
-import type { DashboardOverview } from "@/lib/types"
+import { Card, CardContent } from "@/components/ui/card"
+import { Mail, User } from "lucide-react"
 
 export default function AccountPage() {
     useAuthProtection()
     const { user } = useAuth()
     const dir = useDirection('rtl')
 
-    const [overview, setOverview] = useState<DashboardOverview | null>(null)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const { toast } = useToast()
+    // Get username from localStorage or user object
+    const [userName, setUserName] = useState<string>('')
 
     useEffect(() => {
-        let mounted = true
-        const controller = new AbortController()
+        const storedName = localStorage.getItem('userName')
+        setUserName(storedName || user?.username || 'جون دو')
+    }, [user])
 
-        const load = async () => {
-            setLoading(true)
-            setError(null)
-            try {
-                const res = await dashboardApi.getOverview({ signal: controller.signal })
-                if (!mounted) return
-                setOverview(res)
-            } catch (err) {
-                if (!mounted) return
-                const msg = (err as Error)?.message ?? 'Failed to load overview'
-                setError(msg)
-                toast({ title: 'Failed to load overview', description: msg })
-            } finally {
-                if (mounted) setLoading(false)
-            }
-        }
-
-        load()
-
-        return () => {
-            mounted = false
-            controller.abort()
-        }
-    }, [toast])
-
-    const retry = useCallback(() => {
-        setError(null)
-        setLoading(true)
-
-        const controller = new AbortController()
-
-            ; (async () => {
-                try {
-                    const res = await dashboardApi.getOverview({ signal: controller.signal })
-                    setOverview(res)
-                    setError(null)
-                } catch (err) {
-                    const msg = (err as Error)?.message ?? 'Failed to load overview'
-                    setError(msg)
-                    toast({ title: 'Failed to load overview', description: msg })
-                } finally {
-                    setLoading(false)
-                }
-            })()
-    }, [toast])
-
-    const { login: contextLogin } = useAppContext()
-
-    const initials = (user?.username || user?.email || "User")
+    const initials = (userName || user?.email || "User")
         .split(" ")
         .map(s => s[0]?.toUpperCase())
         .slice(0, 2)
         .join("")
 
-    const [editing, setEditing] = useState(false)
-    const [nameInput, setNameInput] = useState<string>(user?.username ?? '')
-
-    const saveName = () => {
-        const trimmed = nameInput.trim()
-        if (trimmed.length < 2) {
-            toast({ title: 'Name too short', description: 'Please enter at least 2 characters.' })
-            return
-        }
-
-        try {
-            const updated = { ...(user ?? { email: '', id: '' }), username: trimmed }
-            contextLogin(updated as any)
-            setEditing(false)
-            toast({ title: 'Profile updated', description: 'Your display name was updated.' })
-        } catch (err) {
-            const msg = (err as Error)?.message ?? 'Failed to update name'
-            toast({ title: 'Update failed', description: msg })
-        }
-    }
-
     return (
-        <div className="min-h-screen bg-white" dir={dir} lang={dir === 'rtl' ? 'ar' : 'en'}>
-            <div className="max-w-full mx-auto px-4 py-6">
-                <h1 className={`${dir === 'rtl' ? 'text-right' : 'text-left'} text-xl font-bold mb-4`}>
-                    {dir === 'rtl' ? 'الحساب' : 'Account'}
+        <div className="min-h-screen bg-white" dir={dir}>
+            <div className="mx-auto w-full max-w-4xl px-3 sm:px-6 py-4 sm:py-6">
+                {/* Page Title */}
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-right">
+                    حسابي
                 </h1>
 
-                <Card className="border border-slate-200 rounded-lg shadow-sm">
-                    <CardContent className="p-4">
-                        <div className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} items-center justify-between gap-4`}>
-                            {/* Left side: Avatar and user info */}
-                            <div className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} items-center gap-3 flex-1`}>
-                                <Avatar className="h-12 w-12" aria-label={`Avatar for ${user?.username ?? user?.email ?? 'user'}`}>
-                                    <AvatarFallback className="text-sm bg-[#35AB4E] text-white font-semibold">{initials}</AvatarFallback>
-                                </Avatar>
-                                <div className={`flex-1 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
-                                    <h2 className="text-base font-semibold">{user?.username ?? 'Guest'}</h2>
-                                    <p className="text-xs text-slate-500">{user?.email ?? 'Not signed in'}</p>
+                {/* Profile Card */}
+                <Card className="border-2 border-slate-200 rounded-2xl shadow-sm mb-6">
+                    <CardContent className="p-6 sm:p-8">
+                        {/* Profile Picture Section */}
+                        <div className="flex flex-col items-center mb-8">
+                            <Avatar className="h-24 w-24 sm:h-32 sm:w-32 mb-4 bg-gradient-to-br from-green-400 to-green-600 border-4 border-green-200">
+                                <AvatarFallback className="text-4xl sm:text-5xl font-bold text-white bg-transparent">
+                                    {initials}
+                                </AvatarFallback>
+                            </Avatar>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 text-center">
+                                {userName}
+                            </h2>
+                            <p className="text-sm text-gray-500 text-center">طالب</p>
+                        </div>
+
+                        {/* User Information */}
+                        <div className="space-y-4">
+                            {/* Username Field */}
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                    <User className="w-5 h-5 text-green-600" />
+                                </div>
+                                <div className="flex-1 text-right">
+                                    <p className="text-xs text-gray-500 mb-1">اسم المستخدم</p>
+                                    <p className="text-base font-semibold text-gray-800">{userName}</p>
                                 </div>
                             </div>
 
-                            {/* Right side: Stats and Logout */}
-                            <div className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} items-center gap-3`}>
-                                
-                                {loading && (
-                                    <div className="text-xs text-slate-500 px-3">
-                                        {dir === 'rtl' ? 'جاري التحميل...' : 'Loading...'}
-                                    </div>
-                                )}
-
-                                <LogoutButton />
+                            {/* Email Field */}
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <Mail className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div className="flex-1 text-right">
+                                    <p className="text-xs text-gray-500 mb-1">البريد الإلكتروني</p>
+                                    <p className="text-base font-semibold text-gray-800 break-all">
+                                        {user?.email || 'user@example.com'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        {error && (
-                            <div className="text-xs text-red-500 mt-3">
-                                {error}
-                            </div>
-                        )}
                     </CardContent>
                 </Card>
             </div>
