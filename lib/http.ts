@@ -3,7 +3,7 @@ import { getAuthToken } from '@/lib/authUtils';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { getCookie, getCookies, setCookie, deleteCookie, hasCookie } from 'cookies-next';
 
-export const API_BASE_URL = 'http://localhost:4000/api';
+export const API_BASE_URL = 'https://367feb3c534c.ngrok-free.app/api';
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: false,
