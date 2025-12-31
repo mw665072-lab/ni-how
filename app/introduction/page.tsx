@@ -126,6 +126,8 @@ export default function SheikhPage() {
               chineseCompleted={chineseCompleted}
               showChineseRecording={false}
               showDiv={false}
+              imageWidth={360}
+              imageHeight={360}
             />
           ) : (
             <div className="flex justify-center items-center h-64">
@@ -136,28 +138,28 @@ export default function SheikhPage() {
           )}
         </div>
 
-        <div className="flex gap-4 space-x-reverse mb-8 mx-10">
+        <div className="flex justify-center gap-4 w-full px-4 items-center">
           <Button
             variant="outline"
             onClick={handleUserGuideClick}
-            className="flex-1 bg-[#E5E5E5] hover:text-gray-800 border-[#E5E5E5] text-gray-800 hover:bg-[#E5E5E5] 
-            h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-48 bg-[#FFCB08] hover:bg-[#FFCB08] border-none border-b-[4px] border-b-[#DEA407] text-[#1F1F1F]
+            h-14 py-4 flex items-center justify-center gap-3 text-lg font-bold rounded-2xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
           >
-            <BookOpen className="h-5 w-5 ml-2" />
-            دليل المستخدم
+            <BookOpen className="h-5 w-5" />
+            <span>دليل المستخدم</span>
           </Button>
 
           <Button
             onClick={handleNextClick}
             disabled={isNavigating || (!introComplete && !skipIntro)}
-            className="flex-1 bg-[#636363] hover:bg-[#5a5a5a] text-white 
-            h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-48 bg-[#35AB4E] hover:bg-[#35AB4E] border-b-[4px] border-b-[#298E3E] text-white 
+            h-14 py-4 flex items-center justify-center gap-3 text-lg font-bold rounded-2xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-none"
           >
-            {isNavigating ? "جاري التحميل..." : "ابدأ"}
+            {isNavigating ? "جاري التحميل..." : "استمر"}
             {isNavigating ? (
-              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <ChevronLeft className="h-5 w-5 mr-2" />
+              <ChevronLeft className="h-6 w-6" />
             )}
           </Button>
         </div>

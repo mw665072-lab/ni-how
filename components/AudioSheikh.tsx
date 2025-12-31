@@ -21,7 +21,8 @@ interface LanguageLearningInterfaceProps {
   arabicCompleted?: boolean;
   chineseCompleted?: boolean;
   showChineseRecording?: boolean;
-
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
 export default function LanguageLearningInterface({
@@ -35,7 +36,9 @@ export default function LanguageLearningInterface({
   arabicCompleted = false,
   chineseCompleted = false,
   showChineseRecording = true,
-  showDiv=true
+  showDiv = true,
+  imageWidth = 360,
+  imageHeight = 360,
 }: LanguageLearningInterfaceProps) {
   const [isContextPlaying, setIsContextPlaying] = useState(false);
   const [isPronunciationPlaying, setIsPronunciationPlaying] = useState(false);
@@ -68,7 +71,7 @@ export default function LanguageLearningInterface({
   };
 
   const handlePronunciationPlay = () => {
-    console.log("handlePronunciationPlay called",chineseAudioRef.current);
+    console.log("handlePronunciationPlay called", chineseAudioRef.current);
     if (chineseAudioRef.current) {
       if (isPronunciationPlaying) {
         chineseAudioRef.current.pause();
@@ -180,64 +183,65 @@ export default function LanguageLearningInterface({
 
       <button
         onClick={handleContextPlay}
-        className={`bg-[#FFCB08] hover:bg-[#E5B607] transition-all duration-300 rounded-full px-6 py-2 flex items-center gap-2 shadow-sm ${!arabicCompleted ? "animate-pulse" : ""}`}
+        className={`bg-[#FFCB08] hover:bg-[#FFCB08] border-b-[4px] border-b-[#E5B607] active:border-b-0 active:translate-y-[2px] transition-all duration-150 rounded-full pl-2 pr-8 py-2 flex items-center justify-between gap-4 shadow-sm w-48 h-14 ${!arabicCompleted ? "animate-pulse" : ""
+          }`}
         disabled={!arabicAudioUrl}
       >
-        <div className="bg-white rounded-full p-1">
+        <span className="text-[#1F1F1F] font-bold text-lg">جملة السياق</span>
+        <div className="bg-white rounded-full p-1.5 w-9 h-9 flex items-center justify-center border-2 border-white">
           {isContextPlaying ? (
-            <Pause className="h-3 w-3 text-[#FFCB08]" />
+            <Pause className="h-4 w-4 text-[#F97316] fill-current" />
           ) : (
-            <Play className="h-3 w-3 text-[#FFCB08] ml-0.5" />
+            <Play className="h-4 w-4 text-[#F97316] fill-current ml-0.5" />
           )}
         </div>
-        <span className="text-gray-900 font-medium text-sm">جملة السياق</span>
       </button>
 
       <div className="py-2 flex justify-center gap-8 items-center relative flex-col">
         <div className="flex flex-col md:flex-row gap-4 w-full justify-center items-stretch">
-         
+
 
           {/* Right Card: Target Phrase Info */}
           {showDiv && (
             <>
-             <Card
-            className="hidden md:flex flex-shrink-0 flex-col items-center justify-center p-6 bg-[#DCFCE7]"
-            style={{
-              height: 230,
-              width: 319,
-              minHeight: 230,
-              borderRadius: '16px',
-              border: 'none',
-              boxShadow: 'none',
-            }}
-          >
-            <div className="flex flex-col items-center gap-4" dir="ltr">
-              {/* <h2 className="text-3xl font-bold text-[#22C55E]">{targetPhrasePinyin}</h2> */}
-              <div className="flex items-center gap-2 dir-rtl">
-                <Volume2 className="w-5 h-5 text-gray-400" />
-                <span className="text-xl text-gray-700 font-medium">{targetPhraseChinese}</span>
-                <Button
-                  onClick={handlePronunciationPlay}
-                  size="icon"
-                  className="rounded-full bg-[#22C55E] hover:bg-green-600 w-10 h-10 ml-2"
-                >
-                  {isPronunciationPlaying ? (
-                    <Pause className="w-5 h-5 text-white" />
-                  ) : (
-                    <Play className="w-5 h-5 text-white ml-0.5" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </Card>
+              <Card
+                className="hidden md:flex flex-shrink-0 flex-col items-center justify-center p-6 bg-[#DCFCE7]"
+                style={{
+                  height: imageHeight,
+                  width: imageWidth,
+                  minHeight: imageHeight,
+                  borderRadius: '32px',
+                  border: 'none',
+                  boxShadow: 'none',
+                }}
+              >
+                <div className="flex flex-col items-center gap-4" dir="ltr">
+                  <h2 className="text-4xl font-bold text-[#22C55E] tracking-wide mb-1">{targetPhraseChinese}</h2>
+                  <div className="flex items-center gap-3 dir-rtl">
+                    <Volume2 className="w-6 h-6 text-gray-500" />
+                    <span className="text-2xl text-gray-700 font-medium font-sans">{targetPhrasePinyin}</span>
+                    <Button
+                      onClick={handlePronunciationPlay}
+                      size="icon"
+                      className="rounded-full bg-[#22C55E] hover:bg-green-600 w-12 h-12 ml-2 shadow-lg hover:scale-110 transition-transform"
+                    >
+                      {isPronunciationPlaying ? (
+                        <Pause className="w-6 h-6 text-white" />
+                      ) : (
+                        <Play className="w-6 h-6 text-white ml-1" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
             </>
           )}
           <Card
             className="flex-shrink-0"
             style={{
-              height: 230,
-              width: 319,
-              minHeight: 230,
+              height: imageHeight,
+              width: imageWidth,
+              minHeight: imageHeight,
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
@@ -274,23 +278,23 @@ export default function LanguageLearningInterface({
               {isPronunciationPlaying ? (
                 <Pause className="w-5 h-5 text-white" />
               ) : (
-                <Play className="w-5 h-5 text-white ml-0.5" 
-                onClick={()=>{
-                  handlePronunciationPlay();
-                }}
+                <Play className="w-5 h-5 text-white ml-0.5"
+                  onClick={() => {
+                    handlePronunciationPlay();
+                  }}
                 />
               )}
             </Button>
             <span className="text-2xl text-gray-700 font-medium">{targetPhraseChinese}</span>
-            
-                        <Volume2 className="w-5 h-5 text-gray-400" />
+
+            <Volume2 className="w-5 h-5 text-gray-400" />
 
           </div>
         </div>
 
       </div>
 
-     
+
     </div>
   );
 }
