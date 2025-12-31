@@ -33,14 +33,6 @@ export default function UnitsPage() {
     return luminance > 0.7;
   };
 
-  // Static units to display after dynamic ones
-  const staticUnits = [
-    { title: 'الوحدة الثانية', subtitle: 'متوسط' },
-    { title: 'الوحدة الثالثة', subtitle: 'متوسط' },
-    { title: 'الوحدة الرابعة', subtitle: 'متقدم' },
-    { title: 'الوحدة الخامسة', subtitle: 'متقدم' },
-    { title: 'الوحدة السادسة', subtitle: 'متقدم' },
-  ];
 
   return (
     <div className="min-h-screen bg-white" dir="rtl">
@@ -84,11 +76,10 @@ export default function UnitsPage() {
             return (
               <Card
                 key={chapter.id}
-                className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] ${
-                  chapter.status === "active"
+                className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] ${chapter.status === "active"
                     ? "cursor-pointer hover:shadow-xl transition-shadow"
                     : "cursor-not-allowed"
-                }`}
+                  }`}
                 style={{ backgroundColor: color }}
                 onClick={() => handleUnitClick(chapter)}
               >
@@ -115,40 +106,8 @@ export default function UnitsPage() {
                 </CardContent>
               </Card>
             );
-          })} 
+          })}
 
-        {/* Static Locked Units */}
-        {!loading && !error && (
-          <>
-            {staticUnits.map((unit, idx) => {
-              const color = colors[(chapters.length + idx) % colors.length];
-              const light = isLight(color);
-              return (
-                <Card
-                  key={`static-${idx}`}
-                  className="shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] cursor-not-allowed"
-                  style={{ backgroundColor: color }}
-                >
-                  <CardContent className="p-0">
-                    <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                      <div className="flex-1 text-right">
-                        <h3 className={`${light ? 'text-gray-900' : 'text-white'} text-xl font-bold mb-1`}>
-                          {unit.title}
-                        </h3>
-                        <p className={`${light ? 'text-gray-700' : 'text-white'} text-sm`}>
-                          {unit.subtitle}
-                        </p>
-                      </div>
-                      <div className="mr-4">
-                        <Lock className={`h-6 w-6 ${light ? 'text-gray-400' : 'text-white'}`} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </>
-        )}
       </div>
     </div>
   );

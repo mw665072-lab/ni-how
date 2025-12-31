@@ -164,8 +164,8 @@ export default function LeaderboardPage() {
                                                     <div className={`absolute -top-2 end-2 flex h-8 w-8 items-center justify-center rounded-full ${badgeBg} text-sm font-bold text-white shadow-md`}>{position}</div>
                                                 </div>
                                                 <h4 className={`${nameClass} mb-1 truncate`}>{entry.username}</h4>
-                                                <div className={`${timeClass} mb-2`}>{entry.metrics?.avgCompletionTime ? `${entry.metrics.avgCompletionTime}m` : (position === 1 ? 'متقدم' : 'متوسط')}</div>
-                                                <div className={`${topicsClass} text-gray-900`}>{entry.metrics?.topicsCompleted || (position === 1 ? 28 : position === 2 ? 24 : 22)} موضوع</div>
+                                                <div className={`${timeClass} mb-2`}>{entry.metrics?.avgCompletionTime ? `${entry.metrics.avgCompletionTime}m` : '-'}</div>
+                                                <div className={`${topicsClass} text-gray-900`}>{entry.metrics?.topicsCompleted || 0} موضوع</div>
                                             </div>
                                         </div>
                                     </div>
@@ -227,7 +227,7 @@ export default function LeaderboardPage() {
                                                 <div className={`flex flex-col ${isRtl ? 'items-end' : 'items-start'}`}>
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-sm font-semibold text-gray-900">
-                                                            {entry.username || `Student ${displayRank}`}
+                                                            {entry.username || '-'}
                                                         </span>
                                                         {isCurrentUser && (
                                                             <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-md font-medium">
@@ -236,7 +236,7 @@ export default function LeaderboardPage() {
                                                         )}
                                                     </div>
                                                     <div className="text-xs text-blue-500">
-                                                        {entry.metrics?.avgCompletionTime ? `${entry.metrics.avgCompletionTime}m` : 'متوسط'}
+                                                        {entry.metrics?.avgCompletionTime ? `${entry.metrics.avgCompletionTime}m` : '-'}
                                                     </div>
                                                 </div>
                                                 <div className={`flex flex-col ${isRtl ? 'items-start' : 'items-end'}`}>

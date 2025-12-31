@@ -241,7 +241,7 @@ export default function FeedbackPage() {
     // Clear all session storage data
     sessionStorage.removeItem('currentSession');
     sessionStorage.removeItem('sessionFeedback');
-    
+
     // Clear any other potential session data
     const sessionKeys = Object.keys(sessionStorage);
     sessionKeys.forEach(key => {
@@ -249,10 +249,10 @@ export default function FeedbackPage() {
         sessionStorage.removeItem(key);
       }
     });
-    
+
     // Clear all local storage data
     localStorage.clear();
-    
+
     // Navigate to home page
     router.push('/');
   };
@@ -288,9 +288,9 @@ export default function FeedbackPage() {
       <div className="px-4 py-6">
         {/* Page Title */}
         <div className="text-center mb-8">
-           <h1 className="text-3xl font-bold text-black">
-             أحسنت يا  {localStorage.getItem('userName') || 'user'}
-           </h1>
+          <h1 className="text-3xl font-bold text-black">
+            أحسنت يا  {feedback.username || 'user'}
+          </h1>
           <p className="text-gray-600 mt-2 text-lg">
             لقد أكملت الدرس بنجاح. إليك تقييمك الشامل.
           </p>
@@ -397,7 +397,7 @@ export default function FeedbackPage() {
 
               {/* Session Ended Button */}
               <div className="text-center">
-                <Button 
+                <Button
                   onClick={handleSessionEnd}
                   className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-medium"
                 >
