@@ -12,6 +12,7 @@ interface LanguageLearningInterfaceProps {
   chineseAudioUrl?: string;
   targetPhraseChinese?: string;
   targetPhrasePinyin?: string;
+  showDiv?: boolean;
   onRecordingCompleted?: (type: "arabic" | "chinese") => void;
   /**
    * Called with a number 0-100 representing percent played of the currently-playing audio
@@ -20,6 +21,7 @@ interface LanguageLearningInterfaceProps {
   arabicCompleted?: boolean;
   chineseCompleted?: boolean;
   showChineseRecording?: boolean;
+
 }
 
 export default function LanguageLearningInterface({
@@ -33,6 +35,7 @@ export default function LanguageLearningInterface({
   arabicCompleted = false,
   chineseCompleted = false,
   showChineseRecording = true,
+  showDiv=true
 }: LanguageLearningInterfaceProps) {
   const [isContextPlaying, setIsContextPlaying] = useState(false);
   const [isPronunciationPlaying, setIsPronunciationPlaying] = useState(false);
@@ -216,7 +219,9 @@ export default function LanguageLearningInterface({
           </Card>
 
           {/* Right Card: Target Phrase Info */}
-          <Card
+          {showDiv && (
+            <>
+             <Card
             className="flex-shrink-0 flex flex-col items-center justify-center p-6 bg-[#DCFCE7]"
             style={{
               height: 230,
@@ -246,6 +251,9 @@ export default function LanguageLearningInterface({
               </div>
             </div>
           </Card>
+            </>
+          )}
+         
         </div>
 
         <div className="flex flex-col items-center gap-2 mt-8">
@@ -254,8 +262,6 @@ export default function LanguageLearningInterface({
           </h1>
 
           <div className="flex items-center gap-2 dir-rtl">
-            <Volume2 className="w-5 h-5 text-gray-400" />
-            <span className="text-2xl text-gray-700 font-medium">{targetPhraseChinese}</span>
             <Button
               onClick={handlePronunciationPlay}
               size="icon"
@@ -267,6 +273,10 @@ export default function LanguageLearningInterface({
                 <Play className="w-5 h-5 text-white ml-0.5" />
               )}
             </Button>
+            <span className="text-2xl text-gray-700 font-medium">{targetPhraseChinese}</span>
+            
+                        <Volume2 className="w-5 h-5 text-gray-400" />
+
           </div>
         </div>
 

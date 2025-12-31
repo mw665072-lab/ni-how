@@ -125,6 +125,7 @@ export default function SheikhPage() {
               arabicCompleted={arabicCompleted}
               chineseCompleted={chineseCompleted}
               showChineseRecording={false}
+              showDiv={false}
             />
           ) : (
             <div className="flex justify-center items-center h-64">
