@@ -153,7 +153,7 @@ export default function Page() {
 
                     </div>
                     <div className="relative flex flex-col items-center justify-center text-center w-full h-[155px] sm:h-64 md:h-72 lg:h-80 py-4 gap-4 rounded-[16px] border-2 border-transparent bg-[#FFF5CE] shadow-sm">
-                        <Image src="/images/fire.png" alt="decor" width={56} height={56} className="absolute right-2 sm:left-4 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
+                        <Image src="/images/fire.png" alt="decor" width={56} height={56} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
                         <div className="relative z-10">
                             <p className="text-sm sm:text-base font-bold mb-1"> الخط الحالي</p>
                             <h3 className="text-4xl sm:text-5xl font-extrabold mb-1">{currentStreak}</h3>
@@ -162,7 +162,7 @@ export default function Page() {
                     </div>
 
                     <div className="relative flex flex-col items-center justify-center text-center w-full h-[155px] sm:h-64 md:h-72 lg:h-80 py-4 gap-3 rounded-[16px] border-2 border-transparent bg-[#FBD4D3] shadow-sm">
-                        <Image src="/images/start.png" alt="decor" width={56} height={56} className="absolute right-2 sm:left-2 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
+                        <Image src="/images/start.png" alt="decor" width={56} height={56} className="absolute left-2 sm:left-2 top-1/2 -translate-y-1/2 opacity-50 sm:opacity-100" />
                         <div className="relative z-10">
                             <p className="text-sm sm:text-base font-bold mb-1">أطول خط</p>
                             <h3 className="text-4xl sm:text-5xl font-extrabold mb-1">{longestStreak}</h3>

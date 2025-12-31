@@ -109,7 +109,8 @@ export default function SheikhPage() {
           onClick={() => {
             setSkipIntro(true);
             setProgress(100);
-            router.push('/scenario');
+            handleNextClick();
+
           }}
         />
 

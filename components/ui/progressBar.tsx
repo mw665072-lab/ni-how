@@ -7,6 +7,7 @@ interface ProgressBarProps {
     progress?: number;
     dir?: 'ltr' | 'rtl';
     onClick?: () => void;
+    title?: string;
 }
 
 export default function ProgressBar({
@@ -14,7 +15,8 @@ export default function ProgressBar({
     lesson = "",
     progress = 0,
     dir,
-    onClick
+    onClick,
+    title="تخطي"
 }: ProgressBarProps) {
     const [effectiveDir, setEffectiveDir] = useState<'ltr' | 'rtl'>(dir ?? 'rtl');
       const router = useRouter();
@@ -38,7 +40,7 @@ export default function ProgressBar({
                     onClick={onClick}
                         className="inline-flex items-center gap-[4px] h-[33px] py-[6px] px-[16px] opacity-100 rounded-[32px] bg-[#E5E5E5] border-b-2 border-b-[#636363] text-gray-600 transition-colors"
                     >
-                        تخطي ←
+                        {title} ←
                     </button>
                     <h2 className="font-inter-semibold-20 align-middle">{`${unit} ${lesson}`}</h2>
                 </div>

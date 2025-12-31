@@ -48,6 +48,7 @@ export default function ScenarioPage() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const [feedback, setFeedback] = useState<string>("");
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -388,6 +389,10 @@ export default function ScenarioPage() {
         unit={sessionUtils.getCurrentTopic()?.chapter?.name || ""}
         lesson={sessionUtils.getCurrentTopic()?.name || ""}
         progress={scenarioProgress}
+        title="يعود"
+        onClick={()=>{
+          router.push('/units')
+        }}
       />
       <div className="flex-1 overflow-y-auto px-4 pb-24">
         <div className="flex flex-col items-center justify-center space-y-6">
