@@ -119,11 +119,10 @@ export default function TopicsPage() {
             return (
               <Card
                 key={topic.id}
-                className={`shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] ${
-                  topic.status === "active"
-                    ? "cursor-pointer hover:shadow-xl transition-shadow"
-                    : "cursor-not-allowed"
-                }`}
+                className={`shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] ${topic.status === "active"
+                  ? "cursor-pointer hover:shadow-xl transition-shadow"
+                  : "cursor-not-allowed"
+                  }`}
                 style={{ backgroundColor: color }}
                 onClick={() => handleTopicClick(topic)}
               >
@@ -152,39 +151,8 @@ export default function TopicsPage() {
             );
           })}
 
-        {/* Static Locked Topics */}
-        {!loading && !error && !sessionLoading && (
-          <>
-            {staticTopics.map((topic, idx) => {
-              const color = colors[(topics.length + idx) % colors.length];
-              const light = isLight(color);
-              return (
-                <Card
-                  key={`static-${idx}`}
-                  className="shadow-lg rounded-lg py-2 h-auto border border-[#E5E5E5] cursor-not-allowed"
-                  style={{ backgroundColor: color }}
-                >
-                  <CardContent className="p-0">
-                    <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
-                      <div className="flex-1 text-right">
-                        <h3 className={`${light ? 'text-gray-900' : 'text-white'} text-xl font-bold mb-1`}>
-                          {topic.title}
-                        </h3>
-                        <p className={`${light ? 'text-gray-600' : 'text-white'} text-sm`}>
-                          {topic.subtitle}
-                        </p>
-                      </div>
-                      <div className="mr-4">
-                        <Lock className={`h-6 w-6 ${light ? 'text-gray-400' : 'text-white'}`} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </>
-        )}
       </div>
     </div>
   );
 }
+
