@@ -44,12 +44,38 @@ export default function SheikhPage() {
     setIsVideoModalOpen(true);
   };
 
+  // intro shows only Arabic recording — change this if the intro scenario requires Chinese as well
+  const showChineseRecording = false;
+
+  const computeAndSetProgress = (audioPct = 0) => {
+    const totalSteps = showChineseRecording ? 2 : 1;
+    const completedCount = (arabicCompleted ? 1 : 0) + (chineseCompleted ? 1 : 0);
+    let activeFraction = 0;
+
+    // Determine which step is active: arabic first, then chinese (if enabled)
+    if (!arabicCompleted) {
+      activeFraction = audioPct / 100;
+    } else if (showChineseRecording && !chineseCompleted) {
+      activeFraction = audioPct / 100;
+    }
+
+    const value = Math.round(((completedCount + activeFraction) / totalSteps) * 100);
+    setProgress(value);
+  };
+
+  const handleAudioProgress = (audioPct: number) => {
+    computeAndSetProgress(audioPct);
+  };
+
   const handleRecordingCompleted = (type: "arabic" | "chinese") => {
     if (type === "arabic") {
       setArabicCompleted(true);
     } else if (type === "chinese") {
       setChineseCompleted(true);
     }
+
+    // ensure progress reflects the completed step
+    computeAndSetProgress(0);
   };
 
   const handleNextClick = async () => {
@@ -79,6 +105,7 @@ export default function SheikhPage() {
         <ProgressBar progress={progress} 
         onClick={()=>{
           setSkipIntro(true);
+          setProgress(100);
           router.push('/scenario');
         }}
         />
@@ -96,7 +123,7 @@ export default function SheikhPage() {
               targetPhraseChinese={introductionScenario.targetPhraseChinese}
               targetPhrasePinyin={introductionScenario.targetPhrasePinyin}
               onRecordingCompleted={handleRecordingCompleted}
-              onProgressUpdate={setProgress}
+              onProgressUpdate={handleAudioProgress}
               arabicCompleted={arabicCompleted}
               chineseCompleted={chineseCompleted}
               showChineseRecording={false}

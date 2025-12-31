@@ -44,6 +44,7 @@ export default function ScenarioPage() {
   const [lastAttemptScores, setLastAttemptScores] = useState<any>(null);
   const [lastTranscription, setLastTranscription] = useState<string>("");
   const [audioProgress, setAudioProgress] = useState<number>(0);
+  const [scenarioProgress, setScenarioProgress] = useState<number>(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
@@ -56,15 +57,16 @@ export default function ScenarioPage() {
     const sessionData = sessionUtils.getCurrentSession();
 
     if (sessionData && sessionData.scenarios) {
-      setTotalScenarios(sessionData.scenarios.length);
+      const nonIntroScenarios = sessionData.scenarios.filter((s) => !s.isIntroduction);
+      setTotalScenarios(nonIntroScenarios.length);
       let scenarioToLoad: Scenario | undefined;
 
       if (scenarioId) {
-        scenarioToLoad = sessionData.scenarios.find(
+        scenarioToLoad = nonIntroScenarios.find(
           (s) => s.id === parseInt(scenarioId, 10)
         );
       } else {
-        scenarioToLoad = sessionData.scenarios.find((s) => !s.isIntroduction);
+        scenarioToLoad = nonIntroScenarios[0];
       }
 
       if (scenarioToLoad) {
@@ -77,6 +79,11 @@ export default function ScenarioPage() {
         setChineseCompleted(false);
         setIsLoadingScenario(false);
         setAudioProgress(0);
+
+        // compute scenario-based progress: number of completed scenarios (those before current)
+        const currentIndex = nonIntroScenarios.findIndex((s) => s.id === scenarioToLoad!.id);
+        const progressValue = nonIntroScenarios.length > 0 ? Math.round((currentIndex / nonIntroScenarios.length) * 100) : 0;
+        setScenarioProgress(progressValue);
 
         setLastAttemptScores(null);
         setLastTranscription("");
@@ -257,6 +264,13 @@ export default function ScenarioPage() {
           setLastAttemptScores(response.scores);
           setLastTranscription(response.transcription || "");
 
+          // Update session-based progress to include this completed scenario
+          const sessionDataAfter = sessionUtils.getCurrentSession();
+          const nonIntroAfter = sessionDataAfter?.scenarios?.filter((s: Scenario) => !s.isIntroduction) || [];
+          const currentIndexAfter = nonIntroAfter.findIndex((s: Scenario) => s.id === currentScenario?.id);
+          const progressAfter = nonIntroAfter.length > 0 ? Math.round(((currentIndexAfter + 1) / nonIntroAfter.length) * 100) : 0;
+          setScenarioProgress(progressAfter);
+
           if (response.isLastScenario && response.overallFeedback) {
             sessionStorage.setItem(
               "sessionFeedback",
@@ -370,7 +384,7 @@ export default function ScenarioPage() {
   return (
     <div className="h-screen flex flex-col md:pb-0 pb-8 w-full md:px-8 px-8" dir="rtl">
       <audio ref={audioPlayerRef} className="hidden" />
-      <ProgressBar unit="الوحدة الأولى: الدرس الأول" progress={Math.round(audioProgress)} />
+      <ProgressBar unit="الوحدة الأولى: الدرس الأول" progress={scenarioProgress} />
       <div className="flex-1 overflow-y-auto px-4 pb-24">
         <div className="flex flex-col items-center justify-center space-y-6">
           {isLoadingScenario ? (
