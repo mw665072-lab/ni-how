@@ -11,6 +11,7 @@ import { Scenario } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useAuthProtection } from "@/hooks/useAuthProtection";
 import LogoutButton from "@/components/LogoutButton";
+import ProgressBar from "@/components/ui/progressBar";
 
 export default function SheikhPage() {
   useAuthProtection();
@@ -22,10 +23,12 @@ export default function SheikhPage() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [arabicCompleted, setArabicCompleted] = useState(false);
   const [chineseCompleted, setChineseCompleted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [skipIntro, setSkipIntro] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
-    // Get session data and find the introduction scenario
     const scenarios = sessionUtils.getScenarios();
     const introScenario = scenarios.find((scenario) => scenario.isIntroduction);
     console.log("Introduction scenario:", introScenario);
@@ -51,17 +54,17 @@ export default function SheikhPage() {
 
   const handleNextClick = async () => {
     setIsNavigating(true);
-    // Simulate a brief loading period
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Find the first non-introduction scenario
+    // reset progress while navigating
+    setProgress(0);
+
     const scenarios = sessionUtils.getScenarios();
     const nextScenario = scenarios.find((scenario) => !scenario.isIntroduction);
 
     if (nextScenario) {
       router.push(`/scenario?scenarioId=${nextScenario.id}`);
     } else {
-      // Handle case where no next scenario is found
       router.push("/scenario");
     }
   };
@@ -69,22 +72,17 @@ export default function SheikhPage() {
   const handleCloseVideoModal = () => {
     setIsVideoModalOpen(false);
   };
+
   return (
-    <div dir="rtl" className="min-h-screen to-white">
-      <div className="relative">
-        <Header />
-      </div>
-
-      {/* Main Content */}
+    <div dir="rtl" className="min-h-screen bg-white">
       <div className="px-4 py-6">
-        {/* Lesson Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-black">
-            الوحدة الأولى: الدرس الأول
-          </h1>
-        </div>
+        <ProgressBar progress={progress} 
+        onClick={()=>{
+          setSkipIntro(true);
+          router.push('/scenario');
+        }}
+        />
 
-        {/* Language Learning Interface */}
         <div className="mb-8">
           {loading ? (
             <div className="flex justify-center items-center h-64">
@@ -98,6 +96,7 @@ export default function SheikhPage() {
               targetPhraseChinese={introductionScenario.targetPhraseChinese}
               targetPhrasePinyin={introductionScenario.targetPhrasePinyin}
               onRecordingCompleted={handleRecordingCompleted}
+              onProgressUpdate={setProgress}
               arabicCompleted={arabicCompleted}
               chineseCompleted={chineseCompleted}
               showChineseRecording={false}
@@ -111,23 +110,22 @@ export default function SheikhPage() {
           )}
         </div>
 
-        {/* Control Buttons */}
         <div className="flex gap-4 space-x-reverse mb-8 mx-10">
-          {/* User Guide Button */}
           <Button
             variant="outline"
             onClick={handleUserGuideClick}
-            className="flex-1 bg-yellow-400 border-yellow-400 text-gray-800 hover:bg-yellow-500 rounded-full py-3"
+            className="flex-1 bg-yellow-400 border-yellow-400 text-gray-800 hover:bg-yellow-500 
+            h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <BookOpen className="h-5 w-5 ml-2" />
             دليل المستخدم
           </Button>
 
-          {/* Continue Button */}
           <Button
             onClick={handleNextClick}
-            disabled={isNavigating || !arabicCompleted}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-full py-3 disabled:opacity-50"
+            disabled={ isNavigating || (!arabicCompleted && !skipIntro) }
+            className="flex-1 bg-[#636363] hover:bg-[#5a5a5a] text-white 
+            h-10 py-4 flex items-center justify-center gap-2.5 text-sm sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isNavigating ? "جاري التحميل..." : "ابدأ"}
             {isNavigating ? (

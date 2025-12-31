@@ -21,12 +21,10 @@ export default function UnitsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100" dir="rtl">
-      {/* Header Section */}
-      <Header />
+    <div className="min-h-screen bg-white" dir="rtl">
 
       {/* Content Section */}
-      <div className="sm:px-96 px-4 py-6 space-y-4">
+      <div className="px-4 py-6 space-y-4">
         {loading && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-brand" />
@@ -61,31 +59,30 @@ export default function UnitsPage() {
           chapters.map((chapter) => (
             <Card
               key={chapter.id}
-              className={`border-0 shadow-lg ${
+              className={`shadow-lg py-2 h-auto rounded-lg border border-[#E5E5E5] bg-[#F8F9FA] ${
                 chapter.status === "active"
                   ? "cursor-pointer hover:shadow-xl transition-shadow"
                   : "cursor-not-allowed"
               }`}
-              style={{ backgroundColor: chapter.color }}
               onClick={() => handleUnitClick(chapter)}
             >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+              <CardContent className="p-0">
+                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
                   {/* Content */}
                   <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className={`text-xl font-bold mb-1 ${chapter.status === "active" ? "text-gray-900" : "text-gray-500"}`}>
                       {chapter.title}
                     </h3>
-                    <p className="text-white text-sm opacity-90">
+                    <p className={`${chapter.status === "active" ? "text-gray-600" : "text-gray-500"} text-sm`}>
                       {chapter.subtitle}
                     </p>
                   </div>
                   {/* Status Icon */}
                   <div className="mr-4">
                     {chapter.status === "active" ? (
-                      <CheckCircle className="h-6 w-6 text-white" />
+                      <CheckCircle className="h-6 w-6 text-gray-700" />
                     ) : (
-                      <Lock className="h-6 w-6 text-white opacity-70" />
+                      <Lock className="h-6 w-6 text-gray-400" />
                     )}
                   </div>
                 </div>
@@ -96,91 +93,90 @@ export default function UnitsPage() {
         {/* Static Locked Units */}
         {!loading && !error && (
           <>
-            <Card className="border-0 shadow-lg cursor-not-allowed" style={{ backgroundColor: "#3B82F6" }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
+              <CardContent className="p-0">
+                <div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">
                   <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
                       الوحدة الثانية
                     </h3>
-                    <p className="text-white text-sm opacity-90">
+                    <p className="text-gray-600 text-sm">
                       متوسط
                     </p>
                   </div>
                   <div className="mr-4">
-                    <Lock className="h-6 w-6 text-white opacity-70" />
+                    <Lock className="h-6 w-6 text-gray-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg cursor-not-allowed" style={{ backgroundColor: "#8B5CF6" }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
+              <CardContent className="p-0">
+                <div className="h-9 md:h-auto md:py-4 px-3 flex items-center justify-between">
                   <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
                       الوحدة الثالثة
                     </h3>
-                    <p className="text-white text-sm opacity-90">
+                    <p className="text-gray-600 text-sm">
                       متوسط
                     </p>
                   </div>
                   <div className="mr-4">
-                    <Lock className="h-6 w-6 text-white opacity-70" />
+                    <Lock className="h-6 w-6 text-gray-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg cursor-not-allowed" style={{ backgroundColor: "#EF4444" }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
+              <CardContent className="p-0">
+                <div className="h-9 md:h-auto md:py-4 px-3 flex items-center justify-between">
                   <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
                       الوحدة الرابعة
                     </h3>
-                    <p className="text-white text-sm opacity-90">
+                    <p className="text-gray-600 text-sm">
                       متقدم
                     </p>
                   </div>
                   <div className="mr-4">
-                    <Lock className="h-6 w-6 text-white opacity-70" />
+                    <Lock className="h-6 w-6 text-gray-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg cursor-not-allowed" style={{ backgroundColor: "#10B981" }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+            <Card className="shadow-lg rounded-lg border shadow-lg py-2 h-auto border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
+              <CardContent className="p-0">
+                <div className="h-9 md:h-auto md:py-4 px-3 flex items-center justify-between">
                   <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
                       الوحدة الخامسة
                     </h3>
-                    <p className="text-white text-sm opacity-90">
+                    <p className="text-gray-600 text-sm">
                       متقدم
                     </p>
                   </div>
                   <div className="mr-4">
-                    <Lock className="h-6 w-6 text-white opacity-70" />
+                    <Lock className="h-6 w-6 text-gray-400" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg cursor-not-allowed" style={{ backgroundColor: "#F56E8D" }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 text-right">
-                    <h3 className="text-xl font-bold text-white mb-1">
+            <Card className="shadow-lg rounded-lg shadow-lg py-2 h-auto border border-[#E5E5E5] bg-[#F8F9FA] cursor-not-allowed">
+              <CardContent className="p-0">
+<div className="h-auto md:h-auto md:py-4 px-3 flex items-center justify-between">                  <div className="flex-1 text-right">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
                       الوحدة السادسة
                     </h3>
-                    <p className="text-white text-sm opacity-90">
+                    <p className="text-gray-600 text-sm">
                       متقدم
                     </p>
                   </div>
                   <div className="mr-4">
-                    <Lock className="h-6 w-6 text-white opacity-70" />
+                    <Lock className="h-6 w-6 text-gray-400" />
                   </div>
                 </div>
               </CardContent>

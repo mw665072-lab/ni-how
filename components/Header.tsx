@@ -8,125 +8,164 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppContext } from "@/context/AppContext";
-import { Menu, User, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Menu, User, X, LogOut, LayoutDashboard, BookCheck, TrophyIcon, Medal } from "lucide-react";
 
 export default function Header() {
-  const { resetOnboarding, logout, state, sidebarOpen, setSidebarOpen } = useAppContext();
+  const { resetOnboarding, logout, state, sidebarOpen, setSidebarOpen, dir } = useAppContext();
+  const displayName = state?.user || state?.authUser?.username || 'جون دو';
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // small delay to allow AppContext to initialize from storage
+    const timer = setTimeout(() => {
+      if (!state.isAuthenticated) {
+        const publicPaths = ['/welcome', '/login', '/register'];
+        if (!publicPaths.includes(pathname)) {
+          router.push('/welcome');
+        }
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [state.isAuthenticated, pathname, router]);
 
   const handleLogout = () => {
     try {
-      // central logout will clear cookies, localStorage and broadcast to other tabs
       logout();
     } catch (err) {
-      console.warn('Logout failed (context logout):', err);
+      console.warn("Logout failed (context logout):", err);
     }
 
-    // Clear session storage and other session-only keys
     try {
-      sessionStorage.removeItem("currentSession");
-      sessionStorage.removeItem("sessionFeedback");
-      const sessionKeys = Object.keys(sessionStorage);
-      sessionKeys.forEach((key) => {
-        if (
-          key.startsWith("session") ||
-          key.includes("scenario") ||
-          key.includes("attempt")
-        ) {
-          sessionStorage.removeItem(key);
-        }
-      });
-    } catch (err) {
-      // ignore sessionStorage errors
-    }
+      const keysToRemove = Object.keys(sessionStorage).filter((key) =>
+        key.startsWith("session") || key.includes("scenario") || key.includes("attempt") || key === "currentSession" || key === "sessionFeedback"
+      );
+      keysToRemove.forEach((key) => sessionStorage.removeItem(key));
+    } catch (err) { }
 
-    // Keep resetOnboarding in case onboarding userName needs clearing
     try {
       resetOnboarding();
-    } catch (err) {
-      // ignore
-    }
-
-    // Navigate to login
-    // router.push("/login");
+    } catch (err) { }
   };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) {
-      return "صباح الخير";
-    } else if (hour < 18) {
-      return "مساء الخير";
-    } else {
-      return "مساء الخير";
-    }
+    return hour < 12 ? "صباح الخير" : "مساء الخير";
   };
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { href: '/student/dashboard', label: 'لوحة القيادة', Icon: LayoutDashboard },
+    { href: '/units', label: 'الوحدات', Icon: BookCheck },
+    // { href: '/achievements', label: 'الإنجازات', Icon: TrophyIcon },
+    { href: '/leaderboard', label: 'المتصدرين', Icon: Medal },
+    { href: '/account', label: 'حساب المستخدم', Icon: User },
+  ];
+
   return (
-    <div className="px-4 py-4 md:px-6" dir="rtl">
-      {/* Mobile Layout */}
+    <div className="px-4 py-4 md:px-6" dir={dir}>
+
       <div className="md:hidden">
-        <div className="flex items-center justify-between">
-          {/* User Profile */}
+        <div
+          className="flex items-center justify-between h-[84px] px-[16px] py-[14px] rounded-[13px] bg-[#35AB4E]"
+          style={{ boxShadow: "0px 4px 0px 0px #20672F" }}
+          dir={dir}
+        >
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-0 w-10 h-10 bg-white rounded-md flex items-center justify-center shadow-none"
+            onClick={() => {
+              const open = !mobileMenuOpen;
+              if (open) setSidebarOpen?.(false);
+              setMobileMenuOpen(open);
+            }}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5 text-gray-700" />
+            ) : (
+              <Menu className="h-5 w-5 text-gray-700" />
+            )}
+          </Button>
+
+
+         
+
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center cursor-pointer">
-                <User className="h-6 w-6 text-white" />
+              <div className="w-auto h-10 gap-4 rounded-full flex items-center justify-center cursor-pointer shadow-sm">
+                    <div className="flex-1 text-center">
+            <div className="text-white font-bold text-lg truncate">
+              {displayName}
+            </div>
+          </div>
+                <User className="h-8 w-8 text-[#35AB4E] rounded-full bg-white" />
+             
               </div>
+              
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleLogout}>تسجيل الخروج</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          {/* App Title */}
-          <div className="text-center">
-            <div className="flex gap-2 text-3xl font-bold mb-2 justify-center items-center">
-              <span className="text-red-500">你</span>
-              <span className="text-yellow-500">好</span>
-            </div>
-            <div className="flex gap-2 text-1xl font-bold justify-center items-center">
-              <span className="text-yellow-500">ني هاو</span>
-              <span className="text-brand ml-2">الآن</span>
-            </div>
-          </div>
-
-          {/* Hamburger Menu */}
-          <div className="flex items-center gap-2">
-            <Button onClick={handleLogout} variant="outline" size="sm" className="p-2">
-              تسجيل الخروج
-            </Button>
-            {/* Mobile hamburger toggles sidebar as slide-over */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="p-2"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
-            >
-              {sidebarOpen ? <X className="h-6 w-6 text-gray-700" /> : <Menu className="h-6 w-6 text-gray-700" />}
-            </Button>
-          </div>
         </div>
 
-        {/* Greeting Section */}
-        <div className="py-4">
-          <div className="text-right">
-            <div className="text-lg text-gray-700">
-              مرحباً{" "}
-              <span className="font-bold text-brand">
-                {state.user || "محمد"}
-              </span>
+        {/* Mobile dropdown panel */}
+        <div
+          className={`fixed inset-0 z-30 md:hidden ${mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+          aria-hidden={!mobileMenuOpen}
+        >
+          <div
+            className={`absolute inset-0 bg-black/30 transition-opacity ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          <div
+            className={`absolute left-4 right-4 top-[100px] z-40 bg-white rounded-[12px] shadow-lg transform transition-all ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
+            role="dialog"
+            aria-modal="true"
+          >
+            <nav className="p-4">
+              <ul className="flex flex-col gap-2">
+                {navItems.map((item) => (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      className={`flex items-center ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'} px-4 py-3 gap-3 rounded-[10px] hover:bg-gray-100 text-gray-800`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span className="flex-1 text-sm font-medium truncate text-right">{item.label}</span>
+                      <span className="w-6 flex items-center justify-center">
+                        <item.Icon size={18} />
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="p-4 border-t">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-[10px] bg-[#FBD4D3] text-[#8D1716] font-semibold"
+              >
+                <LogOut size={18} />
+                <span>تسجيل الخروج</span>
+              </button>
             </div>
-            <div className="text-base text-gray-600">{getGreeting()}</div>
           </div>
         </div>
       </div>
-
-      {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between">
-        {/* Left Section - User Greeting and Profile */}
         <div className="flex items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -143,24 +182,9 @@ export default function Header() {
           <div className="text-left">
             <div className="font-bold text-lg">
               مرحبًا{" "}
-              <span className="text-green-500">{state.user || "محمد"}</span>
+              <span className="text-green-500">{displayName}</span>
             </div>
-            <div className="text-gray-700 font-medium">صباح الخير</div>
-          </div>
-          {/* <Button onClick={handleLogout} variant="outline" size="sm">
-            تسجيل الخروج
-          </Button> */}
-        </div>
-
-        {/* Right Section - App Title */}
-        <div className="text-right">
-          <div className="flex gap-2 text-3xl font-bold mb-2 items-center justify-end">
-            <span className="text-red-500">好</span>
-            <span className="text-yellow-500 ml-2">你</span>
-          </div>
-          <div className="flex gap-2 text-xl font-bold items-center justify-end">
-            <span className="text-yellow-500">ني هاو</span>
-            <span className="text-green-500 ml-2">الآن</span>
+            <div className="text-gray-700 font-medium">{getGreeting()}</div>
           </div>
         </div>
       </div>

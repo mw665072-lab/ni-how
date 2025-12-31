@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { authApi } from '@/lib/api';
 
 export default function ForgetPasswordPage() {
@@ -18,6 +18,12 @@ export default function ForgetPasswordPage() {
     e.preventDefault();
     if (!email) {
       toast({ title: 'Validation Error', description: 'Please enter your email', variant: 'destructive' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({ title: 'Validation Error', description: 'Please enter a valid email address', variant: 'destructive' });
       return;
     }
 
@@ -35,20 +41,38 @@ export default function ForgetPasswordPage() {
   }, [email, router, toast]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-green-50 to-white flex flex-col items-center justify-center px-4 py-8">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Reset your password</h1>
-        <p className="text-gray-600 text-sm">Enter the email associated with your account</p>
-      </div>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-white flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
 
-      <div className="w-full max-w-sm">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200/50 p-6 backdrop-blur-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <img
+        src="/images/LoginLogo2.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 right-0 z-0 w-[60%] max-w-[220px] h-auto max-h-[225px] opacity-100 transform-none md:top-0"
+        style={{ transform: 'rotate(0deg)', opacity: 1 }}
+      />
+      <img
+        src="/images/LoginLogo.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 bottom-0 z-0 w-[60%] max-w-[420px] h-auto max-h-[225px] opacity-100 transform-none sm:left-4 sm:bottom-0 lg:left-[5px] lg:bottom-0"
+        style={{ transform: 'rotate(0deg)', opacity: 1 }}
+      />
+
+      <div className="w-[92%] max-w-[520px] relative z-10 mx-auto">
+        <div className="bg-white p-6 sm:p-8 backdrop-blur-sm rounded-lg">
+          <div className="mb-6 flex justify-center items-center">
+            <h2 className="text-center" style={{ fontFamily: 'Nunito', fontWeight: 700, fontSize: '24px', lineHeight: '100%', letterSpacing: '0%', textAlign: 'center', color: '#282828' }}>
+              Forgot Password
+            </h2>
+          </div>
+
+          <p className="text-center text-sm text-gray-600 mb-6">We will send you instructions on how to reset your password by email.</p>
+
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-semibold text-gray-900 block">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
+                  aria-label="Email"
                   id="email"
                   name="email"
                   type="email"
@@ -57,25 +81,24 @@ export default function ForgetPasswordPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
-                  className="pl-10 py-2 h-11 bg-gray-50 border-gray-300 focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                  aria-required="true"
+                  aria-invalid={false}
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
                 />
               </div>
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full h-11 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+            <Button type="submit" disabled={isLoading} className="transition duration-200 shadow-md w-full sm:max-w-[470.5px] h-11 sm:h-[45px] gap-[10px] rounded-[12px] border-b-[3px] border-b-[#20672F] hover:bg-[#35AB4E] bg-[#35AB4E] text-[#ECECEC] font-nunito font-bold text-[16px]">
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
+                  Continue
                 </>
               ) : (
-                'Send reset link'
+                'Continue'
               )}
             </Button>
 
-            <div className="text-center text-sm text-gray-600">
-              If an account with that email exists, you will receive instructions to reset your password.
-            </div>
           </form>
         </div>
       </div>

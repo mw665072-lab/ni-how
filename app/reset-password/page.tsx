@@ -57,46 +57,72 @@ export default function ResetPasswordPage() {
   }, [token, newPassword, confirmPassword, router, toast]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-green-50 to-white flex flex-col items-center justify-center px-4 py-8">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Set a new password</h1>
-        <p className="text-gray-600 text-sm">Enter a strong new password for your account</p>
-      </div>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-white flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+      <img
+        src="/images/LoginLogo2.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 right-0 z-0 w-[60%] max-w-[220px] h-auto max-h-[225px] opacity-100 transform-none md:top-0"
+        style={{ transform: 'rotate(0deg)', opacity: 1 }}
+      />
+      <img
+        src="/images/LoginLogo.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 bottom-0 z-0 w-[60%] max-w-[420px] h-auto max-h-[225px] opacity-100 transform-none sm:left-4 sm:bottom-0 lg:left-[5px] lg:bottom-0"
+        style={{ transform: 'rotate(0deg)', opacity: 1 }}
+      />
 
-      <div className="w-full max-w-sm">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200/50 p-6 backdrop-blur-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="w-[92%] max-w-[520px] relative z-10 mx-auto">
+        <div className="bg-white p-6 sm:p-8 backdrop-blur-sm rounded-lg">
+          <div className="mb-6 flex justify-center items-center">
+            <h2 className="text-center" style={{ fontFamily: 'Nunito', fontWeight: 700, fontSize: '24px', lineHeight: '100%', letterSpacing: '0%', textAlign: 'center', color: '#282828' }}>
+              Reset Password
+            </h2>
+          </div>
+
+          <p className="text-center text-sm text-gray-600 mb-6">Enter a strong new password for your account.</p>
+
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="space-y-2">
-              <label htmlFor="newPassword" className="text-sm font-semibold text-gray-900 block">New Password</label>
-              <Input
-                id="newPassword"
-                name="newPassword"
-                type="password"
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                className="py-2 h-11 bg-gray-50 border-gray-300 focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-              />
+              <div className="relative">
+                <Input
+                  aria-label="New Password"
+                  id="newPassword"
+                  name="newPassword"
+                  type="password"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  aria-required="true"
+                  aria-invalid={false}
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-900 block">Confirm Password</label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                className="py-2 h-11 bg-gray-50 border-gray-300 focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
-              />
+              <div className="relative">
+                <Input
+                  aria-label="Confirm Password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  aria-required="true"
+                  aria-invalid={false}
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
+                />
+              </div>
             </div>
 
-            <Button type="submit" disabled={isLoading || !token} className="w-full h-11 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+            <Button type="submit" disabled={isLoading || !token} className="transition duration-200 shadow-md w-full sm:max-w-[470.5px] h-11 sm:h-[45px] gap-[10px] rounded-[12px] border-b-[3px] border-b-[#20672F] hover:bg-[#35AB4E] bg-[#35AB4E] text-[#ECECEC] font-nunito font-bold text-[16px]">
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

@@ -9,15 +9,16 @@ import { useAppContext } from '@/context/AppContext';
 import { authApi } from '@/lib/api';
 import { setAuthToken } from '@/lib/authUtils';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { useDirection } from '@/hooks/useDirection';
+import { Loader2 } from 'lucide-react';
 
 type FormData = {
-  email: string;
+  username: string;
   password: string;
 };
 
 type ValidationErrors = {
-  email?: string;
+  username?: string;
   password?: string;
 };
 
@@ -25,8 +26,9 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAppContext();
   const { toast } = useToast();
+  const dir = useDirection('rtl');
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>({ email: '', password: '' });
+  const [formData, setFormData] = useState<FormData>({ username: '', password: '' });
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,11 +39,8 @@ export default function LoginPage() {
 
   const validate = (data: FormData) => {
     const newErrors: ValidationErrors = {};
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!data.email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(data.email)) {
-      newErrors.email = 'Please enter a valid email address';
+    if (!data.username) {
+      newErrors.username = 'Username is required';
     }
 
     if (!data.password) {
@@ -64,7 +63,7 @@ export default function LoginPage() {
       }
       setIsLoading(true);
       try {
-        const response = await authApi.login({ identifier: formData.email, password: formData.password });
+        const response = await authApi.login({ identifier: formData.username, password: formData.password });
         const token = response?.access_token ?? response?.token;
         const userData = response?.user;
         if (token && userData) {
@@ -87,54 +86,60 @@ export default function LoginPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-green-50 to-white flex flex-col items-center justify-center px-4 py-8">
-      <div className="mb-12 text-center">
-        <div className="flex gap-1 text-4xl font-bold mb-4 justify-center items-center">
-          <span className="text-red-500">你</span>
-          <span className="text-yellow-500">好</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-        <p className="text-gray-600 text-sm">Sign in to your account to continue learning</p>
-      </div>
+    <div className="relative min-h-[calc(100vh-4rem)] bg-white flex flex-col items-center justify-center px-4 py-8 overflow-hidden" dir={'ltr'}>
 
-      <div className="w-full max-w-sm">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200/50 p-8 backdrop-blur-sm">
+      <img
+        src="/images/LoginLogo2.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 right-0 z-0 w-[60%] max-w-[220px] h-auto max-h-[225px] opacity-100 transform-none md:top-0"
+        style={{ transform: 'rotate(0deg)', opacity: 1 }}
+      />
+      <img
+        src="/images/LoginLogo.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 bottom-0 z-0 w-[60%] max-w-[420px] h-auto max-h-[225px] opacity-100 transform-none sm:left-4 sm:bottom-0 lg:left-[5px] lg:bottom-0"
+        style={{ transform: 'rotate(0deg)', opacity: 1 }}
+      />
+
+      <div className="w-[92%] max-w-[520px] relative z-10 mx-auto">
+        <div className="bg-white p-6 sm:p-8 backdrop-blur-sm rounded-lg">
+          <div className="mb-6 flex justify-center items-center">
+            <h2 className="text-center" style={{ fontFamily: 'Nunito', fontWeight: 700, fontSize: '24px', lineHeight: '100%', letterSpacing: '0%', textAlign: 'center', color: '#282828' }}>
+              Login
+            </h2>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-semibold text-gray-900 block">
-                Email Address <span className="text-red-500 ml-1" aria-hidden="true">*</span>
-              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={formData.email}
+                  aria-label="Username"
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={formData.username}
                   onChange={handleInputChange}
                   disabled={isLoading}
                   required
                   aria-required="true"
-                  aria-invalid={errors.email ? 'true' : 'false'}
-                  aria-describedby={errors.email ? 'email-error' : undefined}
-                  className="pl-10 py-2 h-11 bg-gray-50 border-gray-300 focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                  aria-invalid={errors.username ? 'true' : 'false'}
+                  aria-describedby={errors.username ? 'username-error' : undefined}
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
                 />
               </div>
-              {errors.email && (
-                <p id="email-error" className="mt-1 text-xs text-red-600">
-                  {errors.email}
+              {errors.username && (
+                <p id="username-error" className="mt-1 text-xs text-red-600">
+                  {errors.username}
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-semibold text-gray-900 block">
-                Password <span className="text-red-500 ml-1" aria-hidden="true">*</span>
-              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
+                  aria-label="Password"
                   id="password"
                   name="password"
                   type="password"
@@ -146,7 +151,7 @@ export default function LoginPage() {
                   aria-required="true"
                   aria-invalid={errors.password ? 'true' : 'false'}
                   aria-describedby={errors.password ? 'password-error' : undefined}
-                  className="pl-10 py-2 h-11 bg-gray-50 border-gray-300 focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
                 />
               </div>
               {errors.password && (
@@ -156,7 +161,8 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full h-11 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md mt-8">
+            <Button type="submit" disabled={isLoading}
+              className="transition duration-200 shadow-md w-full sm:max-w-[470.5px] h-11 sm:h-[45px] gap-[10px] rounded-[12px] border-b-[3px] border-b-[#20672F] hover:bg-[#35AB4E] bg-[#35AB4E] text-[#ECECEC] font-nunito font-bold text-[16px]">
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -167,33 +173,26 @@ export default function LoginPage() {
               )}
             </Button>
 
-              <div className="mt-2 text-right">
-                <Link href="/forget-password" className="text-sm text-green-600 hover:text-green-700 font-medium">
-                  Forgot password?
-                </Link>
-              </div>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-600">or continue with</span>
-              </div>
+            <div className="mt-2 text-center">
+              <Link
+                href="/forget-password"
+                className="font-nunito font-bold text-[14px] leading-[100%] text-[#35AB4E] hover:bg-transparent bg-transparent underline decoration-[#35AB4E] decoration-1"
+                style={{ textAlign: 'center' }}
+              >
+                Forgot password
+              </Link>
             </div>
 
-            <div className="text-center">
-              <p className="text-gray-600 text-sm">
-                Don't have an account?{' '}
-                <Link href="/register" className="font-semibold text-green-600 hover:text-green-700 transition-colors">
-                  Create one
-                </Link>
-              </p>
-            </div>
+
+            <Button
+              className="font-nunito font-bold w-full sm:max-w-[470.5px] h-11 sm:h-[45px] gap-[10px] rounded-[12px] hover:bg-[#E5E5E5] bg-[#E5E5E5] border-b-[3px] border-b-[rgba(0,0,0,0.08)] text-[#282828] text-[16px] transition duration-200"
+            >
+              Don't have an account? {''}<Link href="/register" className="font-semibold text-green-600 hover:text-green-700 transition-colors">Sign Up
+              </Link>
+            </Button>
+
           </form>
         </div>
-
-        <p className="text-center text-xs text-gray-500 mt-6">By signing in, you agree to our Terms of Service and Privacy Policy</p>
       </div>
     </div>
   );

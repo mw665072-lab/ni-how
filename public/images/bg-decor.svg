@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="480" height="480" viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <style>
+      .s1{fill:#9EA7AE;font-family:Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;font-weight:700;font-size:36px}
+      .s2{fill:#C9D1D6;opacity:0.6}
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="none" />
+  <g transform="translate(60,40) rotate(-15)">
+    <text class="s1" x="0" y="0">学</text>
+    <circle class="s2" cx="40" cy="-10" r="22" />
+  </g>
+  <g transform="translate(220,20) rotate(25)">
+    <text class="s1" x="0" y="0">文</text>
+    <circle class="s2" cx="30" cy="10" r="18" />
+  </g>
+  <g transform="translate(120,160) rotate(-5)">
+    <text class="s1" x="0" y="0">语</text>
+    <circle class="s2" cx="18" cy="-6" r="12" />
+  </g>
+  <g transform="translate(310,140) rotate(10)">
+    <text class="s1" x="0" y="0">文</text>
+    <circle class="s2" cx="8" cy="20" r="10" />
+  </g>
+  <g transform="translate(40,300) rotate(-30)">
+    <text class="s1" x="0" y="0">学</text>
+    <circle class="s2" cx="-6" cy="26" r="14" />
+  </g>
+</svg>

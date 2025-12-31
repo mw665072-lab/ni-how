@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -38,27 +42,157 @@
 
   /* When a client component adds this class, reserve space for the fixed sidebar on desktop only */
   @media (min-width: 768px) {
-    body.has-sidebar.sidebar-expanded {
-      padding-left: 16rem; /* matches sidebar width (w-64) */
+    /* Reserve space for the fixed sidebar (desktop only). We use the explicit sidebar width from `Sidebar` (231px), and include the usual page padding (1rem) so content doesn't touch the sidebar. */
+    :dir(ltr) body.has-sidebar {
+      padding-left: calc(207px + 1rem); /* sidebar width (231px) + layout padding (1rem) */
       transition: padding-left 200ms ease;
     }
 
-    body.has-sidebar.sidebar-collapsed {
-      padding-left: 6rem; /* matches collapsed sidebar width (w-4) */
+    :dir(rtl) body.has-sidebar {
+      padding-right: calc(207px + 1rem);
+      transition: padding-right 200ms ease;
+    }
+
+    :dir(ltr) body.has-sidebar.sidebar-expanded {
+      padding-left: 16rem; /* legacy expanded width (w-64) */
       transition: padding-left 200ms ease;
+    }
+
+    :dir(rtl) body.has-sidebar.sidebar-expanded {
+      padding-right: 16rem;
+      transition: padding-right 200ms ease;
+    }
+
+    :dir(ltr) body.has-sidebar.sidebar-collapsed {
+      padding-left: 6rem; /* legacy collapsed width (w-4) */
+      transition: padding-left 200ms ease;
+    }
+
+    :dir(rtl) body.has-sidebar.sidebar-collapsed {
+      padding-right: 6rem;
+      transition: padding-right 200ms ease;
     }
   }
+  
+  /* Bottom navigation adjusts width depending on whether a sidebar is present.
+     When the body has the `has-sidebar` class (desktop), the bottom nav is
+     offset to avoid overlapping the sidebar. Otherwise it spans the full width. */
+  .has-sidebar-aware {
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0 auto;
+  }
 
+  @media (min-width: 768px) {
+    :dir(ltr) body.has-sidebar .has-sidebar-aware {
+      left: calc(207px + 1rem);
+      width: calc(100% - (207px + 1rem));
+      max-width: calc(100% - (207px + 1rem));
+    }
+
+    :dir(rtl) body.has-sidebar .has-sidebar-aware {
+      right: calc(207px + 1rem);
+      width: calc(100% - (207px + 1rem));
+      max-width: calc(100% - (207px + 1rem));
+    }
+  }
 
   /* hide scroll indicator from all over the app */
   ::-webkit-scrollbar {
     display: none;
   }
 
-  
-
-@layer components {
-  .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  /* When the mobile header menu is open, lock background scroll and push main content down so it's not hidden under the fixed header */
+  body.mobile-menu-open {
+    overflow: hidden;
   }
-}
+
+  @media (max-width: 767px) {
+    body.mobile-menu-open main {
+      padding-top: 4.5rem; /* adjust if header height changes */
+      transition: padding-top 150ms ease;
+    }
+  }
+
+  /* Nunito font utility for Tailwind usage */
+  .font-nunito {
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .font-nunito-semibold-16 {
+    font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+    font-weight: 600;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #332902;
+    leading-trim: none;
+  }
+
+  .font-nunito-extrabold-56 {
+    font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+    font-weight: 800;
+    font-style: normal;
+    font-size: 56px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #2F0807;
+    leading-trim: none;
+  }
+
+  /* Inter 11px medium utility */
+  .font-inter-medium-11 {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    font-weight: 500;
+    font-style: normal;
+    font-size: 11px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #000000;
+    /* preserve designer's request */
+    leading-trim: none;
+  }
+
+  /* Inter 20px semi-bold utility */
+  .font-inter-semibold-20 {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    font-weight: 600;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #282828;
+    text-align: center;
+    /* preserve designer's request */
+    leading-trim: none;
+  }
+
+  /* Almarai ExtraBold utility */
+  .font-almarai-extrabold {
+    font-family: 'Almarai', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+    font-weight: 800;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 28px;
+    letter-spacing: 0;
+    color: #4B4B4B;
+    leading-trim: none;
+  }
+
+  /* Almarai ExtraBold 28px utility */
+  .font-almarai-extrabold-28 {
+    font-family: 'Almarai', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+    font-weight: 800;
+    font-style: normal;
+    font-size: 28px;
+    line-height: 100%;
+    letter-spacing: 0;
+    color: #282828;
+  }
+
+  /* Experimental property requested by designer */
+  .leading-trim-none {
+    leading-trim: none;
+  }

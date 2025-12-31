@@ -2,9 +2,8 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import { getAuthToken } from '@/lib/authUtils';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { getCookie, getCookies, setCookie, deleteCookie, hasCookie } from 'cookies-next';
-import { get } from 'node:http';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://c066a5f770c5.ngrok-free.app/api';
+export const API_BASE_URL = 'http://localhost:4000/api';
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: false,

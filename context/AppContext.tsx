@@ -22,10 +22,14 @@ interface AppContextType {
   setState: React.Dispatch<React.SetStateAction<AppState>>;
     sidebarOpen: boolean;
     setSidebarOpen: (v: boolean) => void;
+    mobileMenuOpen: boolean;
+    setMobileMenuOpen: (v: boolean) => void;
   completeOnboarding: (userName: string) => void;
   resetOnboarding: () => void;
   login: (user: User) => void;
   logout: () => void;
+  dir: "ltr" | "rtl";
+  setDir: (d: "ltr" | "rtl") => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -39,17 +43,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
     authUser: null,
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Load user data from localStorage and cookies on mount
+  const [dir, setDirState] = useState<"ltr" | "rtl">(() => {
+    try {
+      if (typeof window === 'undefined') return 'rtl'
+      const stored = localStorage.getItem('dir') as "ltr" | "rtl" | null
+      if (stored) return stored
+      return (document.documentElement?.dir as "ltr" | "rtl") || 'rtl'
+    } catch (err) {
+      return 'rtl'
+    }
+  })
+
+  const setDir = (d: "ltr" | "rtl") => {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('dir', d)
+        document.documentElement.dir = d
+
+        try {
+          const bc = 'BroadcastChannel' in window ? new BroadcastChannel('nihao-dir') : null
+          bc?.postMessage({ type: 'dir-change', dir: d })
+          bc?.close()
+        } catch (err) {
+        }
+
+        localStorage.setItem('dir_event', JSON.stringify({ type: 'dir-change', dir: d, ts: Date.now() }))
+      }
+    } catch (err) {
+    }
+
+    setDirState(d)
+  }
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedUserName = localStorage.getItem('userName');
       const hasCompleted = savedUserName !== null;
-      
-      // Check for auth cookie (uses cookies-next via lib/authUtils)
       const authToken = getAuthToken();
       const authUserStr = localStorage.getItem('authUser');
-      
+
       setState(prev => ({
         ...prev,
         user: savedUserName,
@@ -60,15 +94,53 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Setup BroadcastChannel + storage event listener for realtime cross-tab auth updates
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    document.documentElement.dir = dir
+
+    let bc: BroadcastChannel | null = null
+    try {
+      if ('BroadcastChannel' in window) {
+        bc = new BroadcastChannel('nihao-dir')
+        bc.onmessage = (ev: MessageEvent) => {
+          const payload = ev.data
+          if (payload?.type === 'dir-change' && (payload.dir === 'ltr' || payload.dir === 'rtl')) {
+            setDirState(payload.dir)
+            document.documentElement.dir = payload.dir
+          }
+        }
+      }
+    } catch (err) {
+      bc = null
+    }
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'dir_event' && e.newValue) {
+        try {
+          const payload = JSON.parse(e.newValue as string)
+          if (payload?.type === 'dir-change' && (payload.dir === 'ltr' || payload.dir === 'rtl')) {
+            setDirState(payload.dir)
+            document.documentElement.dir = payload.dir
+          }
+        } catch (err) {
+        }
+      }
+    }
+
+    window.addEventListener('storage', onStorage)
+
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      try { bc?.close() } catch (err) { }
+    }
+  }, [dir])
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     let bc: BroadcastChannel | null = null;
     try {
       if ('BroadcastChannel' in window) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         bc = new BroadcastChannel('nihao-auth');
         bc.onmessage = (ev: MessageEvent) => {
           const msg = ev.data;
@@ -95,7 +167,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
             setState(prev => ({ ...prev, isAuthenticated: !!getAuthToken(), authUser: authUserStr ? JSON.parse(authUserStr) : null }));
           }
         } catch (err) {
-          // ignore malformed payload
         }
       }
     };
@@ -107,7 +178,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       try {
         bc?.close();
       } catch (err) {
-        // ignore
       }
     };
   }, []);
@@ -137,9 +207,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const login = (user: User) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('authUser', JSON.stringify(user));
-      // ensure auth cookie exists for other checks; set a simple token placeholder if needed
-      // token should be set by the login response handler via `setAuthToken(token)`;
-      // do not overwrite it here with a placeholder value.
 
       setState(prev => ({
         ...prev,
@@ -147,17 +214,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         authUser: user,
       }));
 
-      // Broadcast login to other tabs
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         const bc = typeof window !== 'undefined' && 'BroadcastChannel' in window ? new BroadcastChannel('nihao-auth') : null;
         bc?.postMessage('login');
         bc?.close();
       } catch (err) {
-        // ignore
       }
-      // also trigger storage event fallback
       localStorage.setItem('authEvent', JSON.stringify({ type: 'login', ts: Date.now() }));
     }
   };
@@ -165,11 +227,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('authUser');
-      // clear cookie using auth util
       try {
         clearAuthToken();
       } catch (err) {
-        // ignore
       }
 
       setState(prev => ({
@@ -178,23 +238,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
         authUser: null,
       }));
 
-      // Broadcast logout to other tabs
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         const bc = typeof window !== 'undefined' && 'BroadcastChannel' in window ? new BroadcastChannel('nihao-auth') : null;
         bc?.postMessage('logout');
         bc?.close();
       } catch (err) {
-        // ignore
       }
-      // storage event fallback
       localStorage.setItem('authEvent', JSON.stringify({ type: 'logout', ts: Date.now() }));
     }
   };
 
   return (
-    <AppContext.Provider value={{ state, setState, sidebarOpen, setSidebarOpen, completeOnboarding, resetOnboarding, login, logout }}>
+    <AppContext.Provider value={{ state, setState, sidebarOpen, setSidebarOpen, mobileMenuOpen, setMobileMenuOpen, completeOnboarding, resetOnboarding, login, logout, dir, setDir }}>
       {children}
     </AppContext.Provider>
   );
