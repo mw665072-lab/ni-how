@@ -27,7 +27,7 @@ interface AppContextType {
   completeOnboarding: (userName: string) => void;
   resetOnboarding: () => void;
   login: (user: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   dir: "ltr" | "rtl";
   setDir: (d: "ltr" | "rtl") => void;
 }
@@ -233,27 +233,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
-    if (typeof window !== 'undefined') {
+  const logout = async () => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      // Remove client-side stored auth/user info
       localStorage.removeItem('authUser');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('username');
+
+      // Clear sessionStorage keys related to sessions
+      try {
+        const keysToRemove = Object.keys(sessionStorage).filter((key) =>
+          key.startsWith("session") || key.includes("scenario") || key.includes("attempt") || key === "currentSession" || key === "sessionFeedback"
+        );
+        keysToRemove.forEach((key) => sessionStorage.removeItem(key));
+      } catch (err) { }
+
       try {
         clearAuthToken();
-      } catch (err) {
-      }
+      } catch (err) { }
 
       setState(prev => ({
         ...prev,
         isAuthenticated: false,
         authUser: null,
+        user: null,
+        hasCompletedOnboarding: false,
       }));
 
       try {
-        const bc = typeof window !== 'undefined' && 'BroadcastChannel' in window ? new BroadcastChannel('nihao-auth') : null;
+        const bc = 'BroadcastChannel' in window ? new BroadcastChannel('nihao-auth') : null;
         bc?.postMessage('logout');
         bc?.close();
-      } catch (err) {
-      }
+      } catch (err) { }
+
       localStorage.setItem('authEvent', JSON.stringify({ type: 'logout', ts: Date.now() }));
+    } catch (err) {
+      // swallow
     }
   };
 

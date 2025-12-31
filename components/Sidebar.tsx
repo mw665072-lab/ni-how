@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { Home, Trophy, Award, Users, User, LogOut, X ,Medal,LayoutDashboard,BookCheck,TrophyIcon, Menu } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
+import { useRouter } from 'next/navigation';
 
 const usePathname = () => '/student/dashboard';
 
@@ -16,7 +17,22 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { state, sidebarOpen, setSidebarOpen, dir, mobileMenuOpen, setMobileMenuOpen } = useAppContext();
+  const { state, sidebarOpen, setSidebarOpen, dir, mobileMenuOpen, setMobileMenuOpen, logout, resetOnboarding } = useAppContext();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      try {
+        resetOnboarding();
+      } catch (err) { }
+      setSidebarOpen?.(false);
+      setMobileMenuOpen?.(false);
+      router.push('/login');
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
   const displayName = state?.user || state?.authUser?.username || 'جون دو';
   const isRtl = dir === 'rtl';
 
@@ -116,7 +132,7 @@ export default function Sidebar() {
 
         <div className="p-3 mt-auto">
           <button
-            onClick={() => {}}
+            onClick={() => handleLogout()}
             aria-label="Logout"
             className={`w-[90%] mx-auto h-[40px] flex items-center ${isRtl ? 'flex-row-reverse' : 'flex-row'} px-[12px] py-[8px] gap-[10px] rounded-[12px] bg-[#FBD4D3] text-[#8D1716] transition-colors`}
           >

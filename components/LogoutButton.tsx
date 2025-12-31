@@ -12,7 +12,7 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
     try {
-      logout();
+      await logout();
       toast({
         title: 'Success',
         description: 'You have been logged out',

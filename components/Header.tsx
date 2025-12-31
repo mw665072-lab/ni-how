@@ -31,9 +31,10 @@ export default function Header() {
     return () => clearTimeout(timer);
   }, [state.isAuthenticated, pathname, router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      logout();
+      await logout();
+      router.push('/login');
     } catch (err) {
       console.warn("Logout failed (context logout):", err);
     }

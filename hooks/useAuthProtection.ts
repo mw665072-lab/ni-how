@@ -71,8 +71,12 @@ export function useLogout() {
   const router = useRouter();
   const { logout: contextLogout } = useAppContext();
 
-  const logout = () => {
-    contextLogout();
+  const logout = async () => {
+    try {
+      await contextLogout();
+    } catch (err) {
+      // ignore
+    }
     router.push('/login');
   };
 
