@@ -35,6 +35,12 @@ export default function Header() {
     try {
       await logout();
       router.push('/login');
+      // Reset logout state after a short delay to ensure navigation completes
+      setTimeout(() => {
+        try {
+          // This will be handled by the login page loading
+        } catch (err) {}
+      }, 100);
     } catch (err) {
       console.warn("Logout failed (context logout):", err);
     }

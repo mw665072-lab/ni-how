@@ -15,6 +15,7 @@ interface AppState {
   hasCompletedOnboarding: boolean;
   isAuthenticated: boolean;
   authUser: User | null;
+  isLoggingOut: boolean;
 }
 
 interface AppContextType {
@@ -41,6 +42,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     hasCompletedOnboarding: false,
     isAuthenticated: false,
     authUser: null,
+    isLoggingOut: false,
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -154,10 +156,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         bc.onmessage = (ev: MessageEvent) => {
           const msg = ev.data;
           if (msg === 'logout') {
-            setState(prev => ({ ...prev, isAuthenticated: false, authUser: null }));
+            setState(prev => ({ ...prev, isAuthenticated: false, authUser: null, isLoggingOut: false }));
           } else if (msg === 'login') {
             const authUserStr = localStorage.getItem('authUser');
-            setState(prev => ({ ...prev, isAuthenticated: !!getAuthToken(), authUser: authUserStr ? JSON.parse(authUserStr) : null }));
+            setState(prev => ({ ...prev, isAuthenticated: !!getAuthToken(), authUser: authUserStr ? JSON.parse(authUserStr) : null, isLoggingOut: false }));
           }
         };
       }
@@ -170,10 +172,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         try {
           const payload = JSON.parse(e.newValue as string);
           if (payload?.type === 'logout') {
-            setState(prev => ({ ...prev, isAuthenticated: false, authUser: null }));
+            setState(prev => ({ ...prev, isAuthenticated: false, authUser: null, isLoggingOut: false }));
           } else if (payload?.type === 'login') {
             const authUserStr = localStorage.getItem('authUser');
-            setState(prev => ({ ...prev, isAuthenticated: !!getAuthToken(), authUser: authUserStr ? JSON.parse(authUserStr) : null }));
+            setState(prev => ({ ...prev, isAuthenticated: !!getAuthToken(), authUser: authUserStr ? JSON.parse(authUserStr) : null, isLoggingOut: false }));
           }
         } catch (err) {
         }
@@ -237,6 +239,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (typeof window === 'undefined') return;
 
     try {
+      // Set logging out state first
+      setState(prev => ({
+        ...prev,
+        isLoggingOut: true,
+      }));
+
       // Remove client-side stored auth/user info
       localStorage.removeItem('authUser');
       localStorage.removeItem('userName');
@@ -260,6 +268,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         authUser: null,
         user: null,
         hasCompletedOnboarding: false,
+        isLoggingOut: false, // Reset immediately after clearing auth
       }));
 
       try {
@@ -270,7 +279,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       localStorage.setItem('authEvent', JSON.stringify({ type: 'logout', ts: Date.now() }));
     } catch (err) {
-      // swallow
+      // swallow and reset state
+      setState(prev => ({ ...prev, isLoggingOut: false }));
     }
   };
 

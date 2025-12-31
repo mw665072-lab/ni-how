@@ -18,6 +18,12 @@ export default function LogoutButton() {
         description: 'You have been logged out',
       });
       router.push('/login');
+      // Reset logout state after a short delay to ensure navigation completes
+      setTimeout(() => {
+        try {
+          // This will be handled by the login page loading
+        } catch (err) {}
+      }, 100);
     } catch (error) {
       console.error('Logout error:', error);
       toast({

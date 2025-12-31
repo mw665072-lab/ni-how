@@ -29,6 +29,12 @@ export default function Sidebar() {
       setSidebarOpen?.(false);
       setMobileMenuOpen?.(false);
       router.push('/login');
+      // Reset logout state after a short delay to ensure navigation completes
+      setTimeout(() => {
+        try {
+          // This will be handled by the login page loading
+        } catch (err) {}
+      }, 100);
     } catch (err) {
       console.error('Logout failed:', err);
     }

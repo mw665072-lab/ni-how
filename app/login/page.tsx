@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -24,12 +24,17 @@ type ValidationErrors = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAppContext();
+  const { login, setState } = useAppContext();
   const { toast } = useToast();
   const dir = useDirection('rtl');
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({ username: '', password: '' });
   const [errors, setErrors] = useState<ValidationErrors>({});
+
+  // Reset isLoggingOut when login page mounts
+  useEffect(() => {
+    setState(prev => ({ ...prev, isLoggingOut: false }));
+  }, [setState]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,7 +63,7 @@ export default function LoginPage() {
       const validation = validate(formData);
       if (Object.keys(validation).length > 0) {
         setErrors(validation);
-        toast({ title: 'Validation Error', description: 'Please fix the highlighted fields', variant: 'destructive' });
+        toast({ title: 'خطأ في التحقق', description: 'الرجاء تصحيح الحقول المظللة', variant: 'destructive' });
         return;
       }
       setIsLoading(true);
@@ -69,15 +74,15 @@ export default function LoginPage() {
         if (token && userData) {
           setAuthToken(token);
           login({ id: String(userData.id ?? ''), email: userData.email ?? '', username: userData.username ?? '' });
-          toast({ title: 'Success', description: 'Welcome back!' });
+          toast({ title: 'تم بنجاح', description: 'مرحبًا بعودتك!' });
           router.push('/units');
         } else {
-          toast({ title: 'Error', description: response?.message ?? 'Login failed', variant: 'destructive' });
+          toast({ title: 'خطأ', description: response?.message ?? 'فشل تسجيل الدخول', variant: 'destructive' });
         }
         setErrors({});
       } catch (err: any) {
         console.error('Login error:', err);
-        toast({ title: 'Error', description: err?.message ?? 'An error occurred during login', variant: 'destructive' });
+        toast({ title: 'خطأ', description: err?.message ?? 'حدث خطأ أثناء تسجيل الدخول', variant: 'destructive' });
       } finally {
         setIsLoading(false);
       }
