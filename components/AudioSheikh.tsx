@@ -208,7 +208,7 @@ export default function LanguageLearningInterface({
       </div>
 
       <div className="py-8 flex justify-center gap-8 items-center relative">
-        <div>
+        <div className="md:block hidden">
           <Card
             className="w-full max-w-md"
             style={{

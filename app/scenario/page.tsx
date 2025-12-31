@@ -514,14 +514,22 @@ export default function ScenarioPage() {
             </>
           )}
         </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 h-auto sm:h-[61px] py-2 px-4 bg-[#FFF5CE] rounded-tl-[16px] rounded-br-[16px] rounded-bl-[16px]">
+          <div className="text-sm font-medium text-gray-700 text-right truncate">تَعلِیق</div>
+
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-[39px] h-[39px] rounded-full bg-[#CCA206] flex-shrink-0" aria-hidden="true" />
+            <div className="text-sm text-gray-700 truncate max-w-[160px] text-right">ليس جيدًا تمامًا</div>
+          </div>
+        </div>
         <div
           className="p-2"
           dir="rtl"
         >
-          <div className="flex gap-1 px-1">
+          <div className="grid grid-cols-2 gap-1 px-1 md:flex md:items-center">
             <Button
               onClick={() => setIsVideoModalOpen(true)}
-              className="flex-1 h-[50px] bg-[#FFCB08] hover:bg-green-600 text-black py-2 rounded-xl flex items-center justify-center gap-1 text-xs sm:text-sm"
+              className="order-3 md:order-1 col-span-2 md:flex-1 md:w-auto h-[50px] bg-[#FFCB08] hover:bg-green-600 text-black py-2 rounded-xl flex items-center justify-center gap-1 text-xs sm:text-sm"
             >
               <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="truncate">دليل المستخدم</span>
@@ -530,7 +538,7 @@ export default function ScenarioPage() {
             <Button
               onClick={() => setIsFeedbackOpen(true)}
               disabled={!lastAttemptScores}
-              className="flex-1 bg-gray-200 h-[50px] hover:bg-gray-300 text-gray-800 py-2 rounded-xl flex items-center justify-center gap-1 text-xs sm:text-sm disabled:opacity-50"
+              className="order-2 md:order-2 w-full md:flex-1 md:w-auto bg-gray-200 h-[50px] hover:bg-gray-300 text-gray-800 py-2 rounded-xl flex items-center justify-center gap-1 text-xs sm:text-sm disabled:opacity-50"
             >
               <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="truncate">تغذية راجعة</span>
@@ -544,7 +552,7 @@ export default function ScenarioPage() {
                 !arabicCompleted ||
                 !chineseCompleted
               }
-              className="flex-1 bg-[#636363] h-[50px] hover:bg-[#5a5a5a] text-white py-4 flex items-center justify-center gap-2.5 text-xs sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="order-1 md:order-3 w-full md:flex-[2] md:w-auto bg-[#636363] h-[50px] hover:bg-[#5a5a5a] text-white py-4 flex items-center justify-center gap-2.5 text-xs sm:text-sm opacity-100 rounded-xl border-b-[3px] border-b-[#454545] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="truncate">
                 {isSubmitting
