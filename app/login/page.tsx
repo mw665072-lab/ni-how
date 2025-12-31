@@ -107,6 +107,7 @@ export default function LoginPage() {
         className="pointer-events-none absolute left-0 bottom-0 z-0 w-[60%] max-w-[420px] h-auto max-h-[225px] opacity-100 transform-none sm:left-4 sm:bottom-0 lg:left-[5px] lg:bottom-0"
         style={{ transform: 'rotate(0deg)', opacity: 1 }}
       />
+      
 
       <div className="w-[92%] max-w-[520px] relative z-10 mx-auto">
         <div className="bg-white p-6 sm:p-8 backdrop-blur-sm rounded-lg">
