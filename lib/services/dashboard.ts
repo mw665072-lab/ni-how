@@ -5,6 +5,8 @@ import type {
   MonthlyMetricsResponse,
   CalendarResponse,
   DashboardOverview,
+  TopicProgressResponse,
+  ChapterProgressResponse,
 } from '@/lib/types';
 
 export const dashboardApi = {
@@ -31,6 +33,16 @@ export const dashboardApi = {
   getOverview: async (config: any = {}): Promise<DashboardOverview> => {
     const url = apiEndpoints.dashboard.overview;
     return apiClient.get<DashboardOverview>(url, undefined, config);
+  },
+
+  getTopicProgress: async (config: any = {}): Promise<TopicProgressResponse> => {
+    const url = apiEndpoints.dashboard.topicProgress;
+    return apiClient.get<TopicProgressResponse>(url, undefined, config);
+  },
+
+  getChapterProgress: async (config: any = {}): Promise<ChapterProgressResponse> => {
+    const url = apiEndpoints.dashboard.chapterProgress;
+    return apiClient.get<ChapterProgressResponse>(url, undefined, config);
   },
 };
 

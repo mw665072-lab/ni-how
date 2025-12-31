@@ -187,6 +187,7 @@ export interface TopicModeSummary {
 }
 
 export interface DashboardOverview {
+  userName?: string;
   topicsCompleted: number;
   totalTopics: number;
   currentStreak: number;
@@ -199,6 +200,43 @@ export interface DashboardOverview {
   xpProgress?: number; // 0 - 100
   wordOfTheWeek?: WordOfTheWeek | null;
   topicModes?: TopicModeSummary[];
+}
+
+// Topic Progress types
+export interface TopicProgress {
+  id: number;
+  name: string;
+  subtitle: string;
+  mode: string;
+  difficulty: string;
+  chapterId: number;
+  chapterName: string;
+  totalScenarios: number;
+  completedScenarios: number;
+  percentage: number;
+  averageScore: number | null;
+  lastAttemptDate: string | null;
+}
+
+export interface TopicProgressResponse {
+  topics: TopicProgress[];
+}
+
+// Chapter Progress types
+export interface ChapterProgress {
+  id: number;
+  name: string;
+  difficulty: string;
+  totalTopics: number;
+  completedTopics: number;
+  percentage: number;
+  totalScenarios: number;
+  completedScenarios: number;
+  topics: TopicProgress[];
+}
+
+export interface ChapterProgressResponse {
+  chapters: ChapterProgress[];
 }
 
 // Leaderboard types

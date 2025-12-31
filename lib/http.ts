@@ -96,6 +96,8 @@ export const apiEndpoints = {
         daily: (date?: string) => `/dashboard/metrics/daily${date ? `?date=${encodeURIComponent(date)}` : ''}`,
         weekly: (weekStart?: string) => `/dashboard/metrics/weekly${weekStart ? `?weekStart=${encodeURIComponent(weekStart)}` : ''}`,
         monthly: (month?: string) => `/dashboard/metrics/monthly${month ? `?month=${encodeURIComponent(month)}` : ''}`,
+        topicProgress: '/dashboard/topics/progress',
+        chapterProgress: '/dashboard/chapters/progress',
     },
     calendar: (year: number, month: number) => `/dashboard/calendar?year=${year}&month=${month}`,
     leaderboard: {
