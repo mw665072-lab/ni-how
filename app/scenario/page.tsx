@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuthProtection } from "@/hooks/useAuthProtection";
 import ProgressBar from "@/components/ui/progressBar";
 import Image from "next/image";
+import AnimatedWaveform from "@/components/scenerio";
 
 export default function ScenarioPage() {
   useAuthProtection();
@@ -486,40 +487,66 @@ export default function ScenarioPage() {
               {!currentScenario?.isIntroduction && (
                 <div className="w-full flex justify-center items-center py-8">
                   <div className="flex items-center justify-center gap-4">
+                    
                     {recordedAudio ? (
                       <>
-                        {/* Playback Controls */}
-                        <button
-                          onClick={handleDiscardClick}
-                          className="w-14 h-14 rounded-full bg-gradient-to-br from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 border-2 border-red-200 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-md"
-                          title="حذف التسجيل"
-                        >
-                          <X className="h-6 w-6 text-red-600 stroke-[2.5px]" />
-                        </button>
-
-                        <button
-                          onClick={handlePlayClick}
-                          className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 border-b-4 border-orange-600 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 active:border-b-0 active:translate-y-[2px] shadow-lg"
-                          title={isPlaying ? "إيقاف" : "تشغيل"}
-                        >
-                          {isPlaying ? (
-                            <Pause className="h-7 w-7 text-white fill-white" />
-                          ) : (
-                            <Play className="h-7 w-7 text-white fill-white ml-1" />
-                          )}
-                        </button>
+                        {/* Playback Controls with Waveform */}
+                        <div className="flex row gap-3 flex-row-reverse items-center">
+                          <Image 
+                            src="/images/audioWave.png" 
+                            alt="Waveform" 
+                            width={310}
+                            height={27}
+                            className="max-w-[310px] w-full h-auto"
+                          />
+                          <button
+                            onClick={handlePlayClick}
+                            className="rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 active:border-b-0 active:translate-y-[2px]"
+                            title={isPlaying ? "إيقاف" : "تشغيل"}
+                          >
+                            {isPlaying ? (
+                              <Image 
+                                src="/images/pause.svg"
+                                alt="Pause" 
+                                width={48} 
+                                height={48} 
+                              />
+                            ) : (
+                              <Image 
+                                src="/images/play.svg"
+                                alt="Play" 
+                                width={48} 
+                                height={48} 
+                              />
+                            )}
+                          </button>
+                          <button
+                            onClick={handleDiscardClick}
+                            className="rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+                            title="حذف التسجيل"
+                          >
+                            <Image 
+                              src="/images/cross.svg"
+                              alt="Discard" 
+                              width={48} 
+                              height={48} 
+                            />
+                          </button>
+                        </div>
                       </>
                     ) : (
                       <>
-                        {/* Recording Button */}
-                        <button
+                      <div>
+                        <div>
+                        {
+  <button
                           onClick={handleRecordClick}
                           disabled={!arabicCompleted}
-                          className={`relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${!arabicCompleted
-                            ? "opacity-40 cursor-not-allowed bg-gray-300"
+                          className={`relative  rounded-full flex items-center justify-center transition-all duration-300  ${!arabicCompleted
+                            ? " cursor-not-allowed"
                             : isRecording
-                              ? "bg-gradient-to-br from-red-500 to-red-600 border-b-4 border-red-700 hover:scale-110 active:scale-95"
-                              : "bg-gradient-to-br from-orange-400 to-orange-500 border-b-4 border-orange-600 hover:scale-110 active:scale-95 active:border-b-0 active:translate-y-[2px]"
+                              ? ""
+                              : "active:scale-95 active:border-b-0 active:translate-y-[2px]"
                             }`}
                           title={
                             !arabicCompleted
@@ -531,28 +558,40 @@ export default function ScenarioPage() {
                         >
                           {isRecording ? (
                             <>
-                              <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75"></div>
-                              <div className="relative w-5 h-5 rounded-sm bg-white"></div>
+                                <Image 
+                              src="/images/audio.svg"
+                              alt="Record" 
+                              width={48} 
+                              height={48} 
+                            />
                             </>
                           ) : (
-                            <Mic className="h-7 w-7 text-white" />
+                           <div className="flex row gap-3 flex-row-reverse">
+                            <Image 
+                              src="/images/audioWave.png" 
+                              alt="Record" 
+                              width={310}
+                              height={27}
+                              className="max-w-[310px] w-full h-auto"
+                            />
+                            <Image 
+                              src="/images/audio.svg"
+                              alt="Record" 
+                              width={48} 
+                              height={48} 
+                            />
+                           </div>
                           )}
                         </button>
+                        }
+                        </div>
+                      </div>
+                      
 
                         {/* Waveform - Only show during recording */}
                         {isRecording && (
-                          <div className="flex items-center gap-1 px-4">
-                            {[...Array(20)].map((_, i) => (
-                              <div
-                                key={i}
-                                className="w-1 bg-orange-500 rounded-full animate-pulse"
-                                style={{
-                                  height: `${Math.random() * 32 + 8}px`,
-                                  animationDelay: `${i * 0.05}s`,
-                                  animationDuration: `${0.5 + Math.random() * 0.5}s`
-                                }}
-                              />
-                            ))}
+                          <div className="">
+                            <AnimatedWaveform />
                           </div>
                         )}
                       </>
