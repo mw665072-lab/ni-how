@@ -139,7 +139,7 @@ export default function Sidebar() {
           <button
             onClick={() => handleLogout()}
             aria-label="Logout"
-            className={`w-[90%] mx-auto h-[40px] flex items-center ${isRtl ? 'flex-row-reverse' : 'flex-row'} px-[12px] py-[8px] gap-[10px] rounded-[12px] bg-[#FBD4D3] text-[#8D1716] transition-colors`}
+            className={`w-[90%] mx-auto h-[40px] flex items-center ${isRtl ? 'flex-row' : 'flex-row-reverse'} px-[12px] py-[8px] gap-[10px] rounded-[12px] bg-[#FBD4D3] text-[#8D1716] transition-colors`}
           >
             <span className="text-[16px] font-semibold leading-[100%] tracking-[0%] leading-trim-none truncate flex-1">تسجيل الخروج</span>
             <span className="w-[24px] flex items-center justify-center shrink-0">

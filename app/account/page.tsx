@@ -12,12 +12,26 @@ export default function AccountPage() {
     const { user } = useAuth()
     const dir = useDirection('rtl')
 
-    // Get username from localStorage or user object
+    // Get username and email from localStorage or user object
     const [userName, setUserName] = useState<string>('')
+    const [userEmail, setUserEmail] = useState<string>('')
 
     useEffect(() => {
         const storedName = localStorage.getItem('userName')
         setUserName(storedName || user?.username || 'جون دو')
+
+        // Get email from authUser stored in localStorage or from context
+        const authUserStr = localStorage.getItem('authUser')
+        if (authUserStr) {
+            try {
+                const authUser = JSON.parse(authUserStr)
+                setUserEmail(authUser?.email || '')
+            } catch {
+                setUserEmail(user?.email || '')
+            }
+        } else {
+            setUserEmail(user?.email || '')
+        }
     }, [user])
 
     const initials = (userName || user?.email || "User")
@@ -68,10 +82,10 @@ export default function AccountPage() {
                                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                                     <Mail className="w-5 h-5 text-blue-600" />
                                 </div>
-                                <div className="flex-1 text-right">
+                                <div className="flex-1 text-right min-w-0">
                                     <p className="text-xs text-gray-500 mb-1">البريد الإلكتروني</p>
-                                    <p className="text-base font-semibold text-gray-800 break-all">
-                                        {user?.email || 'user@example.com'}
+                                    <p className="text-sm sm:text-base font-semibold text-gray-800 truncate" title={userEmail || user?.email || ''}>
+                                        {userEmail || user?.email || 'لم يتم تحديد البريد الإلكتروني'}
                                     </p>
                                 </div>
                             </div>

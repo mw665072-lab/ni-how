@@ -9,7 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 import { authApi } from '@/lib/api';
 import { setAuthToken } from '@/lib/authUtils';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 type FormData = {
   username: string;
@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const { login } = useAppContext();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<FormData>({ username: '', email: '', password: '' });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
@@ -58,7 +59,7 @@ export default function RegisterPage() {
     const fieldResults = fields.map(f => validateField(f));
     const ok = fieldResults.every(Boolean);
     if (!ok) {
-      toast({ title: 'Validation Error', description: 'Please fix the highlighted fields', variant: 'destructive' });
+      // toast({ title: 'Validation Error', description: 'Please fix the highlighted fields', variant: 'destructive' });
     }
     return ok;
   }, [validateField, toast]);
@@ -86,7 +87,7 @@ export default function RegisterPage() {
         const { token, user, message } = normalizeResponse(response);
 
         if (!token || !user) {
-          toast({ title: 'Registration Error', description: message || 'Registration failed', variant: 'destructive' });
+          toast({ title: 'خطأ في التسجيل', description: message || 'فشل التسجيل', variant: 'destructive' });
           return;
         }
 
@@ -94,7 +95,7 @@ export default function RegisterPage() {
           setAuthToken(token);
         } catch (err) {
           console.error('Failed to persist auth token', err);
-          toast({ title: 'Authentication Error', description: 'Unable to save session token', variant: 'destructive' });
+          toast({ title: 'خطأ في المصادقة', description: 'تعذر حفظ رمز الجلسة', variant: 'destructive' });
           return;
         }
 
@@ -104,12 +105,13 @@ export default function RegisterPage() {
           username: user.username ?? user.name ?? '',
         });
 
-        toast({ title: 'Success', description: 'Welcome to Ni Hao Now!' });
+
+          toast({ title: 'تم بنجاح', description: 'مرحبًا بعودتك' });
         router.push('/student/dashboard');
       } catch (error: any) {
         console.error('Registration error:', error);
-        const message = error?.response?.data?.message ?? error?.message ?? 'An unexpected error occurred';
-        toast({ title: 'Error', description: message, variant: 'destructive' });
+        const message = error?.response?.data?.message ?? error?.message ?? 'حدث خطأ غير متوقع';
+        toast({ title: 'خطأ', description: message, variant: 'destructive' });
       } finally {
         setIsLoading(false);
       }
@@ -196,7 +198,7 @@ export default function RegisterPage() {
                   aria-label="Password"
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -205,8 +207,20 @@ export default function RegisterPage() {
                   aria-required="true"
                   aria-invalid={errors.password ? 'true' : 'false'}
                   aria-describedby={errors.password ? 'password-error' : undefined}
-                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 pr-12 rounded-[12px]"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
               {errors.password && (
                 <p id="password-error" className="mt-1 text-xs text-red-600">{errors.password}</p>

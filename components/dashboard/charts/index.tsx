@@ -23,20 +23,19 @@ export default function ArabicStatsChart({ data: propData }: ArabicStatsChartPro
 
   return (
     <div className="flex bg-white h-full" dir="rtl">
-      <div className="w-full p-4 flex flex-col h-full min-h-0">
-        <div className="flex-1 min-h-0">
+      <div className="w-full p-2 sm:p-4 flex flex-col h-full min-h-0">
+        <div className="flex-1 min-h-[100px] sm:min-h-0">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 10, right: 20, left: 20, bottom: 6 }}>
+            <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 6 }}>
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#333', fontSize: 14, fontWeight: 500 }}
+                tick={{ fill: '#333', fontSize: 12, fontWeight: 500 }}
                 axisLine={false}
                 tickLine={false}
                 interval={0}
-                tickMargin={12}
-                padding={{ left: 0, right: 8 }}
+                tickMargin={8}
               />
-              <Bar dataKey="value" radius={[12, 12, 0, 0]} barSize={40} >
+              <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={30} >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
@@ -45,11 +44,11 @@ export default function ArabicStatsChart({ data: propData }: ArabicStatsChartPro
           </ResponsiveContainer>
         </div>
 
-        <div className="flex justify-center gap-12">
+        <div className="grid grid-cols-3 gap-1 px-2 sm:px-5 mt-1">
           {data.map((item, index) => (
             <div key={index} className="text-center">
               <div
-                className="text-[18px] font-bold"
+                className="text-sm sm:text-[18px] font-bold"
                 style={{ color: item.color }}
               >
                 {item.label}

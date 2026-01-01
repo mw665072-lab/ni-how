@@ -10,7 +10,7 @@ import { authApi } from '@/lib/api';
 import { setAuthToken } from '@/lib/authUtils';
 import { useToast } from '@/hooks/use-toast';
 import { useDirection } from '@/hooks/useDirection';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 type FormData = {
   username: string;
@@ -28,6 +28,7 @@ export default function LoginPage() {
   const { toast } = useToast();
   const dir = useDirection('rtl');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<FormData>({ username: '', password: '' });
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -148,7 +149,7 @@ export default function LoginPage() {
                   aria-label="Password"
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -157,8 +158,20 @@ export default function LoginPage() {
                   aria-required="true"
                   aria-invalid={errors.password ? 'true' : 'false'}
                   aria-describedby={errors.password ? 'password-error' : undefined}
-                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 rounded-[12px]"
+                  className="bg-[#ECECEC] border-0 hover:bg-[#ECECEC] focus:bg-[#ECECEC] focus-visible:bg-[#ECECEC] focus:border-0 focus-visible:border-0 focus:ring-0 focus-visible:ring-0 outline-none w-full h-11 sm:h-[44px] px-4 pr-12 rounded-[12px]"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
               {errors.password && (
                 <p id="password-error" className="mt-1 text-xs text-red-600">
@@ -172,10 +185,10 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Signing in...
+                  Logging in...
                 </>
               ) : (
-                'Sign In'
+                'Login'
               )}
             </Button>
 
@@ -191,10 +204,9 @@ export default function LoginPage() {
 
 
             <Button
-              className="font-nunito font-bold w-full sm:max-w-[470.5px] h-11 sm:h-[45px] gap-[10px] rounded-[12px] hover:bg-[#E5E5E5] bg-[#E5E5E5] border-b-[3px] border-b-[rgba(0,0,0,0.08)] text-[#282828] text-[16px] transition duration-200"
+              className="font-nunito font-bold w-full sm:max-w-[470.5px] h-11 sm:h-[45px] px-3 sm:px-4 rounded-[12px] hover:bg-[#E5E5E5] bg-[#E5E5E5] border-b-[3px] border-b-[rgba(0,0,0,0.08)] text-[#282828] text-[13px] sm:text-[16px] transition duration-200"
             >
-              Don't have an account? {''}<Link href="/register" className="font-semibold text-green-600 hover:text-green-700 transition-colors">Sign Up
-              </Link>
+              <span className="whitespace-nowrap">Don't have an account?</span>{' '}<Link href="/register" className="font-semibold text-green-600 hover:text-green-700 transition-colors whitespace-nowrap">Sign Up</Link>
             </Button>
 
           </form>

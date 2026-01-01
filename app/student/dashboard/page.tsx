@@ -1,6 +1,6 @@
 "use client"
 import DashboardCard from "@/components/dashboard/card"
-import { ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -17,7 +17,8 @@ export default function Page() {
     const [dailyMetrics, setDailyMetrics] = useState<DailyMetricsResponse | null>(null)
     const [weeklyMetrics, setWeeklyMetrics] = useState<WeeklyMetricsResponse | null>(null)
     const [monthlyMetrics, setMonthlyMetrics] = useState<MonthlyMetricsResponse | null>(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [initialLoad, setInitialLoad] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [active, setActive] = useState('daily')
     const [startingSession, setStartingSession] = useState<number | null>(null)
@@ -27,7 +28,7 @@ export default function Page() {
             setStartingSession(topicId)
             const session = await sessionsApi.start({ topicId })
             sessionUtils.setCurrentSession(session)
-            router.push('/scenario')
+            router.push('/introduction')
         } catch (error) {
             console.error("Failed to start session:", error)
         } finally {
@@ -44,7 +45,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchDashboardData() {
             try {
-                setLoading(true)
+                if (initialLoad) setLoading(true)
                 setError(null)
 
                 const [overviewData, progressData, dailyData, weeklyData, monthlyData] = await Promise.all([
@@ -70,13 +71,14 @@ export default function Page() {
                 setError('Failed to load dashboard data')
             } finally {
                 setLoading(false)
+                setInitialLoad(false)
             }
         }
 
         fetchDashboardData()
     }, [])
 
-    if (loading) {
+    if (loading && initialLoad) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center" dir="rtl">
                 <div className="text-center">
@@ -103,8 +105,8 @@ export default function Page() {
         )
     }
 
-    // Use real data or fallback to defaults
-    const userName = overview?.userName || 'الطالب'
+    // Use real data or fallback to cached/defaults
+    const userName = overview?.userName || (typeof window !== 'undefined' ? localStorage.getItem('userName') : null) || 'الطالب'
     const currentStreak = overview?.currentStreak || 0
     const longestStreak = overview?.longestStreak || 0
 
@@ -231,8 +233,8 @@ export default function Page() {
                                             disabled={startingSession === topic.id}
                                             className={`h-10 px-4 bg-[#35AB4E] hover:bg-[#2f9c46] text-white text-sm font-bold rounded-lg border-b-2 border-[#20672F] flex items-center gap-2 transition active:translate-y-[1px] active:border-b-0 ${startingSession === topic.id ? 'opacity-70 cursor-not-allowed' : ''}`}
                                         >
-                                            <ChevronRight className="w-4 h-4 ml-[-4px]" />
                                             {startingSession === topic.id ? 'جاري التحميل...' : 'متابعة'}
+                                            <ChevronLeft className="w-4 h-4 mr-[-4px]" />
                                         </button>
                                     </div>
                                 </div>

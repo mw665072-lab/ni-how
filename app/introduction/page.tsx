@@ -128,6 +128,7 @@ export default function SheikhPage() {
               showDiv={false}
               imageWidth={360}
               imageHeight={360}
+              forceStopAudio={isVideoModalOpen}
             />
           ) : (
             <div className="flex justify-center items-center h-64">
@@ -146,7 +147,7 @@ export default function SheikhPage() {
             h-14 pt-4 pb-4 flex items-center justify-center gap-2.5 text-base sm:text-lg font-bold rounded-xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
           >
             <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-            <span className="truncate">تغذية راجعة</span>
+            <span className="truncate">دليل المستخدم</span>
           </Button>
 
           <Button

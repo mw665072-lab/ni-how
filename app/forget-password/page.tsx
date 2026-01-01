@@ -66,7 +66,7 @@ export default function ForgetPasswordPage() {
             </h2>
           </div>
 
-          <p className="text-center text-sm text-gray-600 mb-6">We will send you instructions on how to reset your password by email.</p>
+          <p className="text-center text-sm text-gray-600 mb-6" dir='ltr'>We will send you instructions on how to reset your password by email.</p>
 
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div className="space-y-2">

@@ -477,6 +477,7 @@ export default function ScenarioPage() {
                   showDiv={true}
                   imageWidth={360}
                   imageHeight={360}
+                  forceStopAudio={isVideoModalOpen}
                 />
               )}
             </>
@@ -491,17 +492,17 @@ export default function ScenarioPage() {
                     {recordedAudio ? (
                       <>
                         {/* Playback Controls with Waveform */}
-                        <div className="flex row gap-3 flex-row-reverse items-center">
+                        <div className="flex row gap-2 md:gap-3 flex-row-reverse items-center w-full justify-center">
                           <Image 
                             src="/images/audioWave.png" 
                             alt="Waveform" 
                             width={310}
                             height={27}
-                            className="max-w-[310px] w-full h-auto"
+                            className="max-w-[180px] sm:max-w-[240px] md:max-w-[310px] w-full h-auto"
                           />
                           <button
                             onClick={handlePlayClick}
-                            className="rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 active:border-b-0 active:translate-y-[2px]"
+                            className="rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 active:border-b-0 active:translate-y-[2px] flex-shrink-0"
                             title={isPlaying ? "إيقاف" : "تشغيل"}
                           >
                             {isPlaying ? (
@@ -509,40 +510,43 @@ export default function ScenarioPage() {
                                 src="/images/pause.svg"
                                 alt="Pause" 
                                 width={48} 
-                                height={48} 
+                                height={48}
+                                className="w-10 h-10 md:w-12 md:h-12"
                               />
                             ) : (
                               <Image 
                                 src="/images/play.svg"
                                 alt="Play" 
                                 width={48} 
-                                height={48} 
+                                height={48}
+                                className="w-10 h-10 md:w-12 md:h-12"
                               />
                             )}
                           </button>
                           <button
                             onClick={handleDiscardClick}
-                            className="rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+                            className="rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 flex-shrink-0"
                             title="حذف التسجيل"
                           >
                             <Image 
                               src="/images/cross.svg"
                               alt="Discard" 
                               width={48} 
-                              height={48} 
+                              height={48}
+                              className="w-10 h-10 md:w-12 md:h-12"
                             />
                           </button>
                         </div>
                       </>
                     ) : (
                       <>
-                      <div>
+                      <div className="w-full">
                         <div>
                         {
   <button
                           onClick={handleRecordClick}
                           disabled={!arabicCompleted}
-                          className={`relative  rounded-full flex items-center justify-center transition-all duration-300  ${!arabicCompleted
+                          className={`relative rounded-full flex items-center justify-center transition-all duration-300 w-full ${!arabicCompleted
                             ? " cursor-not-allowed"
                             : isRecording
                               ? ""
@@ -562,23 +566,25 @@ export default function ScenarioPage() {
                               src="/images/audio.svg"
                               alt="Record" 
                               width={48} 
-                              height={48} 
+                              height={48}
+                              className="w-10 h-10 md:w-12 md:h-12"
                             />
                             </>
                           ) : (
-                           <div className="flex row gap-3 flex-row-reverse">
+                           <div className="flex row gap-2 md:gap-3 flex-row-reverse items-center justify-center w-full">
                             <Image 
                               src="/images/audioWave.png" 
                               alt="Record" 
                               width={310}
                               height={27}
-                              className="max-w-[310px] w-full h-auto"
+                              className="max-w-[180px] sm:max-w-[240px] md:max-w-[310px] w-full h-auto"
                             />
                             <Image 
                               src="/images/audio.svg"
                               alt="Record" 
                               width={48} 
-                              height={48} 
+                              height={48}
+                              className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0"
                             />
                            </div>
                           )}
@@ -590,7 +596,7 @@ export default function ScenarioPage() {
 
                         {/* Waveform - Only show during recording */}
                         {isRecording && (
-                          <div className="">
+                          <div className="w-full flex justify-center">
                             <AnimatedWaveform />
                           </div>
                         )}

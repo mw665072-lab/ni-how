@@ -23,6 +23,10 @@ interface LanguageLearningInterfaceProps {
   showChineseRecording?: boolean;
   imageWidth?: number;
   imageHeight?: number;
+  /**
+   * When set to true, forces all audio playback to stop immediately
+   */
+  forceStopAudio?: boolean;
 }
 
 export default function LanguageLearningInterface({
@@ -39,6 +43,7 @@ export default function LanguageLearningInterface({
   showDiv = true,
   imageWidth = 360,
   imageHeight = 360,
+  forceStopAudio = false,
 }: LanguageLearningInterfaceProps) {
   const [isContextPlaying, setIsContextPlaying] = useState(false);
   const [isPronunciationPlaying, setIsPronunciationPlaying] = useState(false);
@@ -50,6 +55,22 @@ export default function LanguageLearningInterface({
   console.log("arabicAudioUrl", targetPhraseChinese, targetPhrasePinyin);
 
   // pauseAllOtherAudios is defined below where we also reset progress so the top bar stays in sync
+
+  // Stop all audio when forceStopAudio becomes true
+  useEffect(() => {
+    if (forceStopAudio) {
+      if (arabicAudioRef.current) {
+        arabicAudioRef.current.pause();
+        arabicAudioRef.current.currentTime = 0;
+      }
+      if (chineseAudioRef.current) {
+        chineseAudioRef.current.pause();
+        chineseAudioRef.current.currentTime = 0;
+      }
+      setIsContextPlaying(false);
+      setIsPronunciationPlaying(false);
+    }
+  }, [forceStopAudio]);
 
   const handleContextPlay = () => {
     if (arabicAudioRef.current) {

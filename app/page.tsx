@@ -1,114 +1,66 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
+import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
-import { Button } from "@/components/ui/button"
 
-export default function Home() {
+export default function WelcomeOnBoardingScreen() {
+  const { dir, setDir } = useAppContext();
   const router = useRouter();
-  const { state } = useAppContext();
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Check authentication status
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Give context time to load from storage
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-
-        // If user is authenticated, redirect to dashboard or onboarding
-        if (state.isAuthenticated) {
-          if (!state.hasCompletedOnboarding) {
-            // Usually handled by onboarding page or specialized flow, 
-            // but redirecting to dashboard which handles onboarding check is safer
-            router.push('/student/dashboard');
-          } else {
-            router.push('/student/dashboard');
-          }
-        }
-        // If NOT authenticated, we stay here (Welcome Page)
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [state.isAuthenticated, state.hasCompletedOnboarding, router]);
-
-  if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="text-[#35AB4E] font-bold">Loading...</div>
-    </div>;
-  }
-
-  // If authenticated, we are redirecting, so return null or loader
-  if (state.isAuthenticated) {
-    return null;
-  }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 relative overflow-hidden" dir="rtl">
-
-      <div className="w-full max-w-6xl flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 z-10">
-
-        {/* Left Side (Image) - Hidden on mobile, effectively moved to center */}
-        {/* In RTL: Order 2 puts it on the Left (End) */}
-        <div className="hidden md:flex w-full md:w-1/2 justify-center md:justify-start lg:justify-center order-2 md:order-2">
-          <div className="relative w-[500px] h-[500px] md:w-[650px] md:h-[650px] lg:w-[700px] lg:h-[700px]">
+    <div className="min-h-[calc(100vh-4rem)] bg-white flex items-center justify-center p-4 md:p-8" dir={"ltr"}>
+      <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 lg:gap-16">
+        <div className="w-full md:w-2/5 lg:w-1/2 flex justify-center">
+          <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-64 md:h-64 lg:w-[28rem] lg:h-[28rem] relative">
             <Image
-              src="/images/welcome.png"
-              alt="NiHaoNow Characters"
-              fill
+              src="/images/2.png"
+              alt="NihaoNow illustration"
+              fill={true}
               className="object-contain"
-              priority
             />
           </div>
         </div>
 
-        {/* Right Side (Content) */}
-        {/* In RTL: Order 1 puts it on the Right (Start) */}
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-right order-1 md:order-1">
+        <div className={`w-full md:w-3/5 lg:w-1/2 flex flex-col items-center md:items-center ${dir === 'rtl' ? 'text-right' : 'text-left'}`} lang={dir === 'rtl' ? 'ar' : 'en'}>
 
-          {/* Title */}
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-[#333] mb-6 md:mb-8 leading-tight">
-            تعلم الصينية بطريقة <br />
-            <span className="text-[#333]">ممتعة</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3F3F3F] mb-2">
+            تعلم الصينية بطريقة
+          </h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3F3F3F] mb-8 md:mb-10 lg:mb-12">
+            ممتعة
           </h1>
 
-          {/* Mobile Image (Visible only on mobile) */}
-          <div className="md:hidden relative w-[280px] h-[280px] mb-8">
-            <Image
-              src="/images/welcome.png"
-              alt="NiHaoNow Characters"
-              fill
-              className="object-contain"
-              priority
-            />
+          <div className="w-full max-w-sm space-y-3">
+            <Button
+              onClick={() => router.push('/register')}
+              aria-label="Get started - register"
+              className="transition duration-200 shadow-md w-full max-w-[470.5px] h-[48px] md:h-[54px] py-4 gap-[10px] rounded-[12px] border-b-[3px] border-b-[#20672F] bg-[#35AB4E] hover:bg-[#35AB4E] text-[#ECECEC] font-nunito font-bold text-[16px] leading-[100%] tracking-[0%]"
+            >
+              Get Started
+            </Button>
+
+            <Button
+              onClick={() => router.push('/login')}
+              aria-label="I already have an account - login"
+              className="font-nunito font-bold max-w-[470.5px] w-full h-[48px] md:h-[54px] py-4 gap-[10px] rounded-[12px] bg-[#E5E5E5] hover:bg-[#E5E5E5] border-b-[3px] border-b-[rgba(0,0,0,0.08)] opacity-100 text-[#282828] text-[16px] leading-[100%] tracking-[0%] transition duration-200"
+            >
+              I already have an account
+            </Button>
           </div>
 
-          {/* Buttons */}
-          <div className="w-full max-w-sm flex flex-col gap-3">
-            <Link href="/register" className="w-full">
-              <Button className="w-full bg-[#35AB4E] hover:bg-[#298E3E] text-white font-bold py-6 text-lg rounded-xl shadow-md transition-transform active:scale-[0.98]">
-                Get Started
-              </Button>
-            </Link>
-
-            <Link href="/login" className="w-full">
-              <Button variant="ghost" className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-6 text-lg rounded-xl transition-colors">
-                I already have an account
-              </Button>
-            </Link>
+          <div className="w-full max-w-sm mt-6 md:mt-8">
+            <div className="flex justify-between font-inter-medium-11 text-xs md:text-sm">
+              <div className="flex gap-2 md:gap-4">
+                <a href="#" className="hover:text-gray-800 text-start">Privacy Policy</a>
+                <span>|</span>
+                <a href="#" className="hover:text-gray-800">Terms of Use</a>
+              </div>
+              <span>© NihaoNow 2025 Inc.</span>
+            </div>
           </div>
-
-          {/* Footer Links */}
-          <div className="mt-8 md:mt-12 flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-500 font-medium">
-            <Link href="#" className="hover:underline">Terms of Use</Link>
-            <span>|</span>
-            <Link href="#" className="hover:underline">Privacy Policy</Link>
-            <span className="mr-auto md:mr-0 md:ml-auto">© NiHaoNow 2025 Inc.</span>
-          </div>
-
         </div>
       </div>
     </div>

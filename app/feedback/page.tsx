@@ -98,6 +98,7 @@ export default function FeedbackPage() {
   const [feedback, setFeedback] = useState<SessionFeedback | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPlayingFeedback, setIsPlayingFeedback] = useState(false);
+  const [currentPlayingUrl, setCurrentPlayingUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const router = useRouter();
 
@@ -194,47 +195,54 @@ export default function FeedbackPage() {
   const handleFeedbackAudioPlay = () => {
     if (!feedback?.feedbackAudioUrl) return;
 
-    if (isPlayingFeedback) {
+    if (isPlayingFeedback && currentPlayingUrl === feedback.feedbackAudioUrl) {
       audioRef.current?.pause();
       setIsPlayingFeedback(false);
+      setCurrentPlayingUrl(null);
     } else {
-      if (!audioRef.current) {
-        audioRef.current = new Audio(feedback.feedbackAudioUrl);
-        audioRef.current.addEventListener('ended', () => setIsPlayingFeedback(false));
+      if (audioRef.current) {
+        audioRef.current.pause();
       }
+      audioRef.current = new Audio(feedback.feedbackAudioUrl);
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlayingFeedback(false);
+        setCurrentPlayingUrl(null);
+      });
       audioRef.current.play();
       setIsPlayingFeedback(true);
+      setCurrentPlayingUrl(feedback.feedbackAudioUrl);
     }
   };
 
   const handleAttemptAudioPlay = (url?: string) => {
     if (!url) return
-    if (!audioRef.current) {
-      audioRef.current = new Audio(url)
-      audioRef.current.addEventListener('ended', () => setIsPlayingFeedback(false))
-      audioRef.current.play()
-      setIsPlayingFeedback(true)
-      return
-    }
 
     // if same source, toggle play/pause
-    if ((audioRef.current as HTMLAudioElement).src === url) {
+    if (currentPlayingUrl === url) {
       if (isPlayingFeedback) {
-        audioRef.current.pause()
+        audioRef.current?.pause()
         setIsPlayingFeedback(false)
+        setCurrentPlayingUrl(null)
       } else {
-        audioRef.current.play()
+        audioRef.current?.play()
         setIsPlayingFeedback(true)
+        setCurrentPlayingUrl(url)
       }
       return
     }
 
     // switch source
-    audioRef.current.pause()
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
     audioRef.current = new Audio(url)
-    audioRef.current.addEventListener('ended', () => setIsPlayingFeedback(false))
+    audioRef.current.addEventListener('ended', () => {
+      setIsPlayingFeedback(false)
+      setCurrentPlayingUrl(null)
+    })
     audioRef.current.play()
     setIsPlayingFeedback(true)
+    setCurrentPlayingUrl(url)
   }
 
   const handleSessionEnd = () => {
@@ -345,7 +353,7 @@ export default function FeedbackPage() {
                         className="bg-green-500 hover:bg-green-600 text-white rounded-full p-2 transition-colors"
                         disabled={!feedback.feedbackAudioUrl}
                       >
-                        {isPlayingFeedback ? (
+                        {isPlayingFeedback && currentPlayingUrl === feedback.feedbackAudioUrl ? (
                           <Pause className="h-3 w-3" />
                         ) : (
                           <Play className="h-3 w-3" />
@@ -371,23 +379,34 @@ export default function FeedbackPage() {
                 <div className="space-y-3 mt-4">
                   <h3 className="text-right font-semibold text-gray-700 mb-2">محاولات</h3>
                   {feedback.attempts.map((a) => (
-                    <div key={a.id ?? a.scenarioId} className="bg-white rounded-lg p-3 shadow-sm flex items-center justify-between">
-                      <div className="text-right">
+                    <div key={a.id ?? a.scenarioId} className="bg-white rounded-lg p-3 shadow-sm flex items-center gap-3">
+                      {/* Play button column - fixed width for alignment */}
+                      <div className="flex-shrink-0 w-10 flex justify-center">
+                        {a.audioFeedbackUrl ? (
+                          <button
+                            onClick={() => handleAttemptAudioPlay(a.audioFeedbackUrl)}
+                            className="bg-green-500 hover:bg-green-600 text-white rounded-full p-2 transition-colors"
+                            aria-label={`Play attempt ${a.scenarioNumber ?? a.scenarioId} feedback`}
+                          >
+                            {isPlayingFeedback && currentPlayingUrl === a.audioFeedbackUrl ? (
+                              <Pause className="h-3 w-3" />
+                            ) : (
+                              <Play className="h-3 w-3" />
+                            )}
+                          </button>
+                        ) : (
+                          <div className="w-8 h-8" /> /* Placeholder for alignment */
+                        )}
+                      </div>
+                      {/* Score column - fixed width */}
+                      <div className="flex-shrink-0 w-12 text-center">
+                        <div className="text-sm font-medium text-gray-600">{a.totalScore ?? '-'}</div>
+                      </div>
+                      {/* Content column - flexible width */}
+                      <div className="flex-1 text-right">
                         <div className="font-medium">المشهد {a.scenarioNumber ?? a.scenarioId}</div>
                         {a.textualFeedback && <div className="text-sm text-gray-600 mt-1">{a.textualFeedback}</div>}
                         <div className="text-xs text-gray-500 mt-1">نطق: {a.pronunciationScore ?? 0}% • دقة: {a.accuracyScore ?? 0}% • طلاقة: {a.fluencyScore ?? 0}% • اكتمال: {a.completenessScore ?? 0}%</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {a.audioFeedbackUrl && (
-                          <button
-                            onClick={() => handleAttemptAudioPlay(a.audioFeedbackUrl)}
-                            className="bg-green-500 hover:bg-green-600 text-white rounded-full p-2"
-                            aria-label={`Play attempt ${a.scenarioNumber ?? a.scenarioId} feedback`}
-                          >
-                            <Play className="h-3 w-3" />
-                          </button>
-                        )}
-                        <div className="text-sm text-gray-500">{a.totalScore ?? '-'}</div>
                       </div>
                     </div>
                   ))}
@@ -395,7 +414,7 @@ export default function FeedbackPage() {
               )}
 
               {/* Session Ended Button */}
-              <div className="text-center">
+              <div className="text-center mt-8 pb-4">
                 <Button
                   onClick={handleSessionEnd}
                   className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-medium"
