@@ -3,9 +3,8 @@
 import React, { useEffect } from 'react';
 import { Home, Trophy, Award, Users, User, LogOut, X ,Medal,LayoutDashboard,BookCheck,TrophyIcon, Menu } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
-import { useRouter } from 'next/navigation';
-
-const usePathname = () => '/student/dashboard';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 const navItems = [
   { href: '/student/dashboard', label: 'لوحة القيادة', Icon: LayoutDashboard },
@@ -113,7 +112,7 @@ export default function Sidebar() {
               const isActive = pathname === item.href;
               return (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     className={`flex items-center ${isRtl ? 'flex-row-reverse' : 'flex-row'} px-4 py-2 h-[40px] gap-[10px] rounded-[12px] transition-colors ${isActive
                       ? 'bg-[#2A893E] text-white'
@@ -129,7 +128,7 @@ export default function Sidebar() {
                     <span className="w-[24px] flex items-center justify-center shrink-0">
                       <item.Icon size={18} />
                     </span>
-                  </a>
+                  </Link>
                 </li>
               );
             })}

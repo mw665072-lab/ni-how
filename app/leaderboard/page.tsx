@@ -90,7 +90,7 @@ export default function LeaderboardPage() {
 
     return (
         <div className="min-h-screen bg-white" dir='rtl'>
-            <div className="mx-auto w-full max-w-6xl px-3 sm:px-6 py-4 sm:py-6">
+            <div className="mx-auto w-full max-w-full px-3 sm:px-6 py-4 sm:py-6">
                 {/* Tabs */}
                 <div className="flex gap-2 justify-start mb-4 sm:mb-6">
                     <button
@@ -111,7 +111,7 @@ export default function LeaderboardPage() {
                                 : 'bg-[#E5E5E5] text-gray-700'
                             }`}
                     >
-                        شهري
+                        سنوي
                     </button>
                     <button
                         type="button"
@@ -130,7 +130,7 @@ export default function LeaderboardPage() {
                     <CardContent className="p-4 sm:p-8">
                         <h2 className="text-base sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6 text-right">أفضل 3 طلاب</h2>
 
-                        <div className="flex items-end justify-center gap-3 sm:gap-8">
+                        <div className="flex items-end justify-center gap-3 sm:gap-8 max-w-3xl mx-auto">
                             {topThree.length >= 3 && (
                                 <>
                                     {/* 2nd Place */}
@@ -220,9 +220,14 @@ export default function LeaderboardPage() {
                                             }`}
                                     >
                                         <div className="flex items-center gap-4 flex-1">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white border-2 border-gray-200 text-sm font-bold text-gray-700">
-                                                {displayRank}
-                                            </div>
+                                           <div className="flex flex-col items-end">
+                                            <span className="text-base font-bold text-gray-800">
+                                                {entry.metrics?.topicsCompleted || 0} موضوع
+                                            </span>
+                                            <span className="text-xs text-gray-500">
+                                                {entry.metrics?.totalSessions || 20} جلسة
+                                            </span>
+                                        </div>
                                             <div className="flex flex-col text-right">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-base font-bold text-gray-800">
@@ -239,14 +244,10 @@ export default function LeaderboardPage() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end">
-                                            <span className="text-base font-bold text-gray-800">
-                                                {entry.metrics?.topicsCompleted || 0} موضوع
-                                            </span>
-                                            <span className="text-xs text-gray-500">
-                                                {entry.metrics?.totalSessions || 20} جلسة
-                                            </span>
-                                        </div>
+                                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white border-2 border-gray-200 text-sm font-bold text-gray-700">
+                                                {displayRank}
+                                            </div>
+                                      
                                     </div>
                                 )
                             })}

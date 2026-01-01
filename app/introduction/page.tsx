@@ -138,28 +138,28 @@ export default function SheikhPage() {
           )}
         </div>
 
-        <div className="flex justify-center gap-4 w-full px-4 items-center">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full px-4 max-w-full mx-auto">
           <Button
             variant="outline"
             onClick={handleUserGuideClick}
-            className="w-48 bg-[#FFCB08] hover:bg-[#FFCB08] border-none border-b-[4px] border-b-[#DEA407] text-[#1F1F1F]
-            h-14 py-4 flex items-center justify-center gap-3 text-lg font-bold rounded-2xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
+            className="w-full bg-[#E5E5E5] hover:bg-[#E5E5E5] border-none border-b-[3px] border-b-[#B0B0B0] hover:text-[#282828] text-[#282828]
+            h-14 pt-4 pb-4 flex items-center justify-center gap-2.5 text-base sm:text-lg font-bold rounded-xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all"
           >
-            <BookOpen className="h-5 w-5" />
-            <span>دليل المستخدم</span>
+            <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+            <span className="truncate">تغذية راجعة</span>
           </Button>
 
           <Button
             onClick={handleNextClick}
             disabled={isNavigating || (!introComplete && !skipIntro)}
-            className="w-48 bg-[#35AB4E] hover:bg-[#35AB4E] border-b-[4px] border-b-[#298E3E] text-white 
-            h-14 py-4 flex items-center justify-center gap-3 text-lg font-bold rounded-2xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-none"
+            className="w-full bg-[#636363] hover:bg-[#636363] border-b-[3px] border-b-[#454545] text-white 
+            h-14 pt-4 pb-4 flex items-center justify-center gap-2.5 text-base sm:text-lg font-bold rounded-xl shadow-sm hover:scale-[1.02] active:translate-y-[2px] active:border-b-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:border-none border-none"
           >
-            {isNavigating ? "جاري التحميل..." : "استمر"}
+            <span className="truncate">{isNavigating ? "جاري التحميل..." : "استمر"}</span>
             {isNavigating ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin flex-shrink-0" />
             ) : (
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
             )}
           </Button>
         </div>

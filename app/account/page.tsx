@@ -28,7 +28,7 @@ export default function AccountPage() {
 
     return (
         <div className="min-h-screen bg-white" dir={dir}>
-            <div className="mx-auto w-full max-w-4xl px-3 sm:px-6 py-4 sm:py-6">
+            <div className="w-full max-w-4xl px-3 sm:px-6 py-4 sm:py-6">
                 {/* Page Title */}
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-right">
                     حسابي

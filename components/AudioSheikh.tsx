@@ -217,10 +217,11 @@ export default function LanguageLearningInterface({
                 }}
               >
                 <div className="flex flex-col items-center gap-4" dir="ltr">
-                  <h2 className="text-4xl font-bold text-[#22C55E] tracking-wide mb-1">{targetPhraseChinese}</h2>
                   <div className="flex items-center gap-3 dir-rtl">
                     <Volume2 className="w-6 h-6 text-gray-500" />
-                    <span className="text-2xl text-gray-700 font-medium font-sans">{targetPhrasePinyin}</span>
+                                      <h2 className="text-4xl font-bold text-[#22C55E] tracking-wide mb-1">{targetPhraseChinese}</h2>
+
+                    {/* <span className="text-2xl text-gray-700 font-medium font-sans">{targetPhrasePinyin}</span> */}
                     <Button
                       onClick={handlePronunciationPlay}
                       size="icon"
@@ -271,14 +272,12 @@ export default function LanguageLearningInterface({
         {/* Mobile Chinese Text & Audio - Matches Screenshot */}
         <div className={`flex ${!showDiv ? "" : "md:hidden"} flex-col items-center gap-1 mt-4`}>
           {/* Main Chinese Text */}
-          <h1 className="text-4xl font-bold text-[#22C55E] mb-1">
+          {/* <h1 className="text-4xl font-bold text-[#22C55E] mb-1">
             {targetPhraseChinese}
-          </h1>
+          </h1> */}
 
           {/* Audio Row: Icon + Pinyin + Play Button */}
           <div className="flex items-center justify-center gap-3 text-gray-500">
-            <Volume2 className="w-5 h-5 opacity-60" />
-            <span className="text-xl font-medium text-gray-600">{targetPhrasePinyin}</span>
             <button
               onClick={handlePronunciationPlay}
               className="w-8 h-8 rounded-full bg-[#35AB4E] flex items-center justify-center shadow-md active:scale-95 transition-transform"
@@ -289,6 +288,9 @@ export default function LanguageLearningInterface({
                 <Play className="w-4 h-4 text-white fill-current ml-0.5" />
               )}
             </button>
+            <span className="text-xl font-medium text-gray-600">{targetPhraseChinese}</span>
+               <Volume2 className="w-5 h-5 opacity-60" />
+
           </div>
         </div>
 
