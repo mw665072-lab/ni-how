@@ -3,7 +3,7 @@ import { getAuthToken } from '@/lib/authUtils';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { getCookie, getCookies, setCookie, deleteCookie, hasCookie } from 'cookies-next';
 
-export const API_BASE_URL = 'https://d4e557b31a5b.ngrok-free.app/api';
+export const API_BASE_URL = 'https://facetious-lillian-steepled.ngrok-free.dev/api';
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: false,
